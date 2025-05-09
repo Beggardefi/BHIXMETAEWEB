@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BHIXU - Superhero Metaverse Presale</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- AOS Animation CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    </head>
+
+<body>
+  <!-- Background video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="Bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- Navigation -->
+  <header id="mainHeader">
+  <nav>
+    <a href="index.html" class="logo">
+      <span class="logo-text">BHIXUMETAWEB</span>
+    </a>
+    <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+    <div class="navbar-menu" id="mainMenu">
+      <a href="#home"><i class="fas fa-home"></i> Home</a>
+      <a href="#presale"><i class="fas fa-coins"></i> Presale</a>
+      <a href="#staking"><i class="fas fa-lock"></i> Staking</a>
+      <a href="#whitepaper"><i class="fas fa-file-alt"></i> Whitepaper</a>
+      <a href="#roadmap"><i class="fas fa-road"></i> Roadmap</a>
+      <a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a>
+    </div>
+  </nav>
+</header>
+
+    
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+  <div class="hero-wrapper">
+    <div class="hero-content">
+        <img src="hero-image.jpg" alt="Bhiku the Superhero">
+      <h1>Welcome to the BHIKX Superhero Metaverse</h1>
+      <p>Join Bhikux on a mission to create a Beggar-Free World through blockchain, business, and bravery.</p>
+  <p class="countdown-label">Presale ends in:</p>
+    <div id="countdown" class="countdown-timer">Loading...</div>
+    <div class="hero-buttons">
+      <a href="#presale" class="btn btn-primary">Join Presale</a>
+ </div>
+      <a href="#join" class="btn btn-secondary">Enter Metaverse</a>
+    </div>
+  </div>
+      <div class="hero-image">
+      <img src="images/bhikux-hero.jpg" alt="Bhikux Superhero" id="bhikuxHero" />
+    </div>
+      <div class="presale-status-banner">
+  <span class="presale-ended">Presale is LIVE!</span>
+  <span id="countdown"></span>
+  <!-- Change text to "Presale Ended" if needed -->   
+      </div>    
+    </section>
+
+    <!-- Live Presale Bar --> 
+   <!-- Left Side: Bhikux Animated GIF -->
+    <section id="presale" class="golden-panel with-bhikux-bg">
+  <div class="presale-content">
+    <h2>Buy BHIKX Tokens</h2>
+    <p>1 USDT = 100 BHIKX</p>
+    <div class="buy-buttons">
+      <button id="buyBNB">Buy with BNB</button>
+      <button id="buyUSDT">Buy with USDT</button>
+      <button id="connectWallet">Connect Wallet</button>
+    </div>
+    <p>Wallet Balance: <span id="walletBalance">--</span></p>
+    <div class="progress-bar">
+      <div id="presale-progress" class="progress"></div>
+    </div>
+    <p id="progress-text">Raised: $25,000 / Target: $300,000</p>
+  </div>
+</section>
+<div id="walletPanel" class="wallet-panel">
+  <p><strong>Wallet:</strong> <span id="walletAddress">Not Connected</span></p>
+  <p><strong>BNB Balance:</strong> <span id="bnbBalance">-</span></p>
+  <p><strong>USDT Balance:</strong> <span id="usdtBalance">-</span></p>
+</div>
+</section>
+    
+    
+    <!-- intro video -->
+    <section class="mt-12 text-center" data-aos="fade-up">
+  <h2 class="text-3xl font-bold text-white mb-4">Discover the Vision</h2>
+  <div class="mx-auto w-full max-w-3xl aspect-video">
+    <iframe class="w-full h-full rounded-2xl shadow-lg"
+      src="https://www.youtube.com/embed/yourVideoID"
+      title="Intro Video"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen></iframe>
+  </div>
+</section>
+
+    <!-- How to Buy -->
+    <section id="how-to-buy" class="how-to-buy-section">
+  <div class="buy-text">
+    <h2>How to Buy BHIKX Tokens</h2>
+    <p>Follow these simple steps to become a part of the BHIKUX Revolution:</p>
+    <ul class="buy-steps">
+      <li>1. Connect your BSC-compatible Wallet (Trust Wallet / MetaMask)</li>
+      <li>2. Fund your wallet with BNB or USDT</li>
+      <li>3. Click “Buy Now” to get your BHIKX Tokens</li>
+      <li>4. Join the Metaverse and explore the world of Bhikux</li>
+    </ul>
+    <a href="#presale" class="buy-now-btn">Buy Now</a>
+  </div>
+  <div class="buy-image">
+    <img src="images/htw-bhikux.jpg" alt="How to Buy Bhikux" class="animated-buy-img" />
+  </div>
+</section>
+
+    <!-- Whitepaper Highlights -->
+<section id="whitepaper" class="golden-panel">
+  <h2 class="whitepaper-heading">Whitepaper Highlights</h2>
+
+  <div class="slider-container">
+    <div class="slider" id="whitepaper-slider">
+      <div class="slide">
+        <h3>Real-world Business Empowerment</h3>
+        <p class="typing-text">Start ventures linked to real-world impact and sustainability.</p>
+        <img src="images/business.jpg" alt="Business" class="slide-image">
+      </div>
+      <div class="slide">
+        <h3>Daily USDT Airdrops</h3>
+        <p class="typing-text">Earn 0.5% daily staking rewards directly in your wallet.</p>
+        <img src="images/airdrop.jpg" alt="Airdrop" class="slide-image">
+      </div>
+      <div class="slide">
+        <h3>Free Autobot Trading Access</h3>
+        <p class="typing-text">Get early access to our AI-powered trading assistant.</p>
+        <img src="images/bot.jpg" alt="Bot" class="slide-image">
+      </div>
+      <div class="slide">
+        <h3>Bhiku Ecosystem</h3>
+        <p class="typing-text">Explore our metaverse driven by lion-hearted superheroes.</p>
+        <img src="images/shero.jpg" alt="Bhiku" class="slide-image">
+      </div>
+      <div class="slide">
+        <h3>Support Social Good</h3>
+        <p class="typing-text">Help fund food, shelter, and education through profits.</p>
+        <img src="images/impact.jpg" alt="Social Impact" class="slide-image">
+      </div>
+      <div class="slide">
+        <h3>Become a Superhero</h3>
+        <p class="typing-text">Step into the metaverse as a Bhiku hero.</p>
+        <video autoplay muted loop class="slide-video">
+          <source src="videos/metaverse-superhero.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="slide">
+        <h3>Start Metaverse Business</h3>
+        <p class="typing-text">Create your empire in the digital economy.</p>
+        <video autoplay muted loop class="slide-video">
+          <source src="videos/metaverse-business.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <button class="arrow left" onclick="prevSlide()">&#9664;</button>
+    <button class="arrow right" onclick="nextSlide()">&#9654;</button>
+  </div>
+  <a href="whitepaper/BHIKX_Whitepaper.pdf" download class="btn-hero" style="--from-color: #00CED1; --to-color: #1E90FF;">
+  Download Whitepaper
+</a>
+
+
+    <!-- roadmap -->
+</section>
+      </div>
+    <section id="roadmap" class="section with-bg roadmap-section">
+  <div class="container">
+    <h2 class="section-title">Our Roadmap</h2>
+    <div class="roadmap-timeline">
+      <div class="milestone fade-in-left">
+        <h3>Phase 1</h3>
+        <p>Concept & Whitepaper Release</p>
+      </div>
+      <div class="milestone fade-in-right">
+        <h3>Phase 2</h3>
+        <p>Initial Funding & Presale</p>
+      </div>
+      <div class="milestone fade-in-left">
+        <h3>Phase 3</h3>
+        <p>Metaverse & Game Dev Launch</p>
+      </div>
+      <div class="milestone fade-in-right">
+        <h3>Phase 4</h3>
+        <p>Global Expansion & Utility Onboarding</p>
+      </div>
+      <div class="roadmap-image-container">
+  <img src="images/roadmap.png" alt="Roadmap Bhikux" class="roadmap-image" />
+</div>
+  </div>
+  
+    <!-- tokenomics -->
+<section id="tokenomics" class="tokenomics-section">
+  <div class="container">
+    <h2 class="section-title">BHIKX Token Allocation</h2>
+    <p class="section-subtitle">Total Supply: <strong>10,000,000,000 BHIKX</strong></p>
+
+    <div class="tokenomics-table">
+      <div class="tokenomics-row header">
+        <div>Category</div>
+        <div>Allocation</div>
+        <div>Details</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Presale</div>
+        <div>15% (1.5B)</div>
+        <div>Instant unlock for early buyers</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Staking & Rewards</div>
+        <div>20% (2B)</div>
+        <div>Released daily via smart contract over 4 years</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Liquidity (DEX & CEX)</div>
+        <div>15% (1.5B)</div>
+        <div>Locked for PancakeSwap and future exchange listings</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Business Expansion</div>
+        <div>15% (1.5B)</div>
+        <div>Franchises, agriculture, metaverse school</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Project Development</div>
+        <div>10% (1B)</div>
+        <div>Platform tools, smart contracts, tech updates</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Partnerships & Collaborations</div>
+        <div>10% (1B)</div>
+        <div>NGOs, third-party integrations, ecosystem growth</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Team Allocation</div>
+        <div>10% (1B)</div>
+        <div>6-month lock, then linear vesting over 3 years</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Airdrops & Community</div>
+        <div>3% (300M)</div>
+        <div>Giveaways, campaigns, early supporters</div>
+      </div>
+
+      <div class="tokenomics-row">
+        <div>Reserve / Emergency Fund</div>
+        <div>2% (200M)</div>
+        <div>DAO-governed, emergency or strategic needs</div>
+        
+      </div>
+    </div>
+  </div>
+  <div class="tokenomics-image-container">
+  <img src="images/tokenomics.png" alt="Tokenomics Chart" class="tokenomics-image" />
+</div>
+</section>
+
+    <!-- Superhero Section -->
+    <section id="superhero" class="golden-panel">
+      <h2>Become a Superhero in the Metaverse</h2>
+      <video autoplay muted loop playsinline style="width: 100%; max-width: 800px;">
+        <source src="assets/superhero-placeholder.mp4" type="video/mp4">
+      </video>
+      <a href="#superhero" class="btn-hero">Join as a Superhero</a>
+
+    </section>
+
+    <!-- Staking -->
+    <section id="staking" class="panel">
+      <h2>BHIKX Staking Program</h2>
+      <div class="staking-stats">
+        <p>Wallet Balance: <span id="stakingwalletBalance">0 BHIKX</span></p>
+        <p>Daily Earnings: <span id="dailyEarning">+0.5%</span></p>
+        <p>Total Rewards: <span id="rewardBalance">0 USDT</span></p>
+        <div class="flex gap-4 mt-4">
+  <button id="stakeBtn" class="btn-secondary">Stake BHIKX</button>
+  <button id="redeemBtn" onclick="redeemRewards()" class="btn-primary">Redeem Rewards</button>
+</div>
+<div class="staking-panel">
+  <h3>Stake BHIXU</h3>
+  <input type="number" id="stakeAmount" placeholder="Amount to stake" />
+  <button id="stakeBtn">Stake Now</button>
+  <p>Staked: <span id="stakedAmount">0</span> BHIXU</p>
+  <p>Rewards: <span id="rewardAmount">0</span> BHIXU</p>
+  <button id="claimStakingReward">Claim Reward</button>
+  <button id="unstakeBtn">Unstake</button>
+</div>
+<style>
+  .btn-stake {
+    @apply bg-green-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-500 shadow hover:scale-105 transition;
+  }
+  .btn-redeem {
+    @apply bg-indigo-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-indigo-500 shadow hover:scale-105 transition;
+  }
+</style>
+
+    <!-- BOT LAUNCH-->
+    </section>
+    <section id="bot-launch" class="golden-panel">
+  <h2>Trading Bot Access</h2>
+  <div id="bot-access-message" class="bot-status">
+    Checking staking balance...
+  </div>
+  <div id="bot-ui" style="display: none;">
+    <p><strong>Bot Activation Key:</strong></p>
+    <input type="text" id="botKey" readonly value="Generating...">
+    <div class="flex gap-4 mt-4">
+  <button class="btn-bot-access">Launch Bot</button>
+  <button class="btn-download-bot">Download Bot</button>
+</div>
+
+<style>
+  .btn-bot-access {
+    @apply bg-red-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-500 shadow-xl transition;
+  }
+  .btn-download-bot {
+    @apply border border-red-600 text-red-600 font-semibold px-6 py-2 rounded-lg hover:bg-red-600 hover:text-white transition;
+  }
+</style>
+    <p class="note">*Key access is suspended if you unstake your BHIKX below $100.</p>
+  </div>
+<div class="bot-access">
+  <h3>Bot Access Key</h3>
+  <p id="bot-access-message">Checking access...</p>
+  <div id="bot-ui" style="display: none;">
+    <input type="text" id="botKey" readonly />
+    <button id="copyBotKey">Copy Key</button>
+    <button id="launchBotBtn">Launch Bot</button>
+  </div>
+</div>
+</section>
+
+    <!-- Referral -->
+    <section id="referral" class="golden-panel">
+      <h2>Referral Program</h2>
+      <p>Share your referral link and earn bonus tokens!</p>
+      <div class="referral-box">
+        <input type="text" id="refLink" value="https://bhikx.io/?ref=0x123..." readonly>
+        <div class="mt-6">
+  <button onclick="copyReferral()"class="btn-primary">Copy My Referral Link</button>
+</div>
+
+<style>
+  .btn-referral {
+    @apply bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-bold px-6 py-2 rounded-full hover:from-blue-400 hover:to-cyan-300 transition transform hover:scale-105;
+  }
+</style>
+<div class="referral-section">
+  <h3>Your Referral Link</h3>
+  <input type="text" id="refLink" value="" readonly />
+  <button id="copyReferralBtn">Copy Referral</button>
+</div>
+    </section>
+<div class="airdrop-claim">
+  <h3>Claim Airdrop</h3>
+  <button id="claimAirdropBtn">Claim Airdrop</button>
+  <p>Status: <span id="airdropStatus">Not Claimed</span></p>
+</div>
+ </section
+    <!-- FAQ -->
+    <section id="faq" class="panel">
+      <h2>FAQ</h2>
+      <p><strong>What is BHIKX?</strong><br>BHIKX is a superhero-driven token for social and economic impact.</p>
+      <p><strong>Minimum to buy?</strong><br>Start with just $10 in USDT or BNB.</p>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="golden-panel">
+      <h2>Contact Us</h2>
+      <form>
+        <input type="text" placeholder="Your Name"/>
+        <input type="email" placeholder="Your Email"/>
+        <textarea placeholder="Your Message"></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 BeggarIndex (BHIKX). All rights reserved.</p>
+    <div class="social-links">
+      <a href="https://x.com/Beggarindex" target="_blank">Twitter</a>
+      <a href="https://t.me/BeggarIndex" target="_blank">Telegram</a>
+      <a href="https://www.instagram.com/beggarindex" target="_blank">Instagram</a>
+      <a href="https://discord.gg/f4GqXVcT" target="_blank">Discord</a>
+    </div>
+    </div>
+    <a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a>
+  </footer>
+
+ <section id="about" data-aos="fade-up" data-aos-delay="100">
+<section id="staking" data-aos="fade-right" data-aos-delay="150">
+<section id="metaverse" data-aos="fade-left" data-aos-delay="200">
+<section id="tokenomics" data-aos="zoom-in" data-aos-delay="250">
+<section id="faq" data-aos="flip-up" data-aos-delay="300">
+<section id="contact" data-aos="fade-up" data-aos-delay="350">
+    
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+  <div class="absolute w-72 h-72 bg-gradient-to-br from-red-500 to-yellow-400 opacity-20 rounded-full animate-pulse -top-24 -left-24 blur-2xl"></div>
+  <div class="absolute w-60 h-60 bg-gradient-to-br from-yellow-400 to-red-600 opacity-20 rounded-full animate-ping top-32 right-10 blur-2xl"></div>
+</div>
+<div id="postWalletUI" style="display:none;" class="wallet-panel">
+  <h2>Welcome, <span id="walletBalance"></span></h2>
+
+  <div class="wallet-actions">
+    <button id="buyBNB" class="wallet-btn">Buy with BNB</button>
+    <button id="buyUSDT" class="wallet-btn">Buy with USDT</button>
+    <button id="redeemBtn" class="wallet-btn">Claim Airdrop</button>
+  </div>
+
+  <div class="referral-section">
+    <h3>Referral</h3>
+    <input type="text" id="refLink" readonly value="https://bhikx.com/?ref=" />
+    <button id="copyReferralBtn" class="wallet-btn small">Copy Referral Link</button>
+  </div>
+
+  <div id="bot-ui" class="bot-access">
+    <h3>Bot Access</h3>
+    <div id="bot-access-message" class="status-msg"></div>
+    <input id="botKey" readonly placeholder="Your Bot Key" />
+    <button id="copyBotKey" class="wallet-btn small">Copy Bot Key</button>
+    <button id="launchBotBtn" class="wallet-btn">Launch Bot</button>
+  </div>
+
+  <div id="staking-ui" class="staking-section">
+    <h3>Staking (Coming Soon)</h3>
+    <p>Stake BHIKX to earn rewards and unlock advanced features.</p>
+  </div>
+</div>
+ <script src="script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+</body>
+</html>
