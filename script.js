@@ -1,3 +1,22 @@
+let provider, signer, utilityContract;
+
+const utilityAbi = [
+  // Add only used functions here, like:
+  "function buyWithBNB(address ref) payable",
+  "function buyWithUSDT(uint256 amount, address ref) external",
+  "function getReferralRewards(address user) view returns (uint256)",
+  "function redeemRewards() external"
+];
+
+const utilityAddress = "0x7380Be8D02b767D6E1071FD562222A15F512D5a6";
+
+async function setupEthers() {
+  if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
+  }
+}
 // -------- Responsive Navbar Toggle --------
 document.getElementById("hamburger").addEventListener("click", () => {
   const navMenu = document.getElementById("navMenu");
@@ -39,6 +58,7 @@ async function connectWallet() {
       userAddress = accounts[0];
       document.getElementById("connectBtn").textContent = "Connected";
       generateReferralLink();
+      await setupEthers();
     } catch (error) {
       alert("Wallet connection failed");
     }
