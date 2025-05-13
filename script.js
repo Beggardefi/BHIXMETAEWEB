@@ -108,7 +108,7 @@ function copyReferral() {
   alert("Referral link copied!");
 }
 //--------- usdt setup-------//
-const usdtAddress = "0x..."; // Replace with actual USDT token address on your chain
+const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // if on BSC
 const erc20Abi = [
   "function approve(address spender, uint256 amount) external returns (bool)",
   "function decimals() view returns (uint8)"
