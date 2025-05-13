@@ -1,250 +1,132 @@
-<script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-<script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-// --- Countdown Timer ---
-const countdownEl = document.getElementById("countdown");
-const presaleEndDate = new Date("2025-06-30T23:59:59").getTime();
-const countdownTimer = setInterval(() => {
+// -------- Responsive Navbar Toggle --------
+document.getElementById("hamburger").addEventListener("click", () => {
+  const navMenu = document.getElementById("navMenu");
+  navMenu.classList.toggle("active");
+});
+
+// -------- Countdown Timer --------
+const countdown = document.getElementById('countdown');
+const endDate = new Date("2025-06-30T23:59:59Z").getTime();
+
+function updateCountdown() {
   const now = new Date().getTime();
-  const distance = presaleEndDate - now;
+  const distance = endDate - now;
 
   if (distance < 0) {
-    clearInterval(countdownTimer);
-    countdownEl.innerHTML = "Presale Ended";
+    countdown.innerHTML = "Presale Ended";
     return;
   }
 
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((distance % (1000 * 60)) / 1000);
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-  countdownEl.innerHTML = `${days}d ${hours}h ${mins}m ${secs}s`;
-}, 1000);
-
-// Navbar Show/Hide on Scroll
-let prevScroll = window.pageYOffset;
-const header = document.getElementById("mainHeader");
-
-window.onscroll = () => {
-  const currentScroll = window.pageYOffset;
-  if (prevScroll > currentScroll) {
-    header.style.top = "0";
-  } else {
-    header.style.top = "-80px";
-  }
-  prevScroll = currentScroll;
-};
-
-// Hamburger Toggle
-document.querySelector(".menu-toggle").addEventListener("click", () => {
-  document.getElementById("mainMenu").classList.toggle("active");
-});
-
-
-// --- Whitepaper Slider ---
-let currentSlide = 0;
-function showSlide(index) {
-  const slides = document.querySelectorAll("#whitepaper-slider .slide");
-  slides.forEach((slide, i) => {
-    slide.style.display = i === index ? "block" : "none";
-  });
+  countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
-function nextSlide() {
-  const slides = document.querySelectorAll("#whitepaper-slider .slide");
-  currentSlide = (currentSlide + 1) % slides.length;
-  showSlide(currentSlide);
-}
-function prevSlide() {
-  const slides = document.querySelectorAll("#whitepaper-slider .slide");
-  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-  showSlide(currentSlide);
-}
-document.addEventListener("DOMContentLoaded", () => {
-  showSlide(currentSlide);
-});
 
-// --- Wallet Connect ---
-let provider;
-let signer;
-let currentAccount = "";
-const usdtAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
-const presaleContractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+
+// -------- Wallet Connection --------
+let userAddress = null;
 
 async function connectWallet() {
-  try {
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-      await provider.send("eth_requestAccounts", []);
-    } else {
-      const walletConnectProvider = new WalletConnectProvider.default({
-        rpc: { 56: "https://bsc-dataseed.binance.org/" },
-        chainId: 56
-      });
-      await walletConnectProvider.enable();
-      provider = new ethers.providers.Web3Provider(walletConnectProvider);
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      userAddress = accounts[0];
+      document.getElementById("connectBtn").textContent = "Connected";
+      generateReferralLink();
+    } catch (error) {
+      alert("Wallet connection failed");
     }
-
-    signer = provider.getSigner();
-    currentAccount = await signer.getAddress();
-    document.getElementById("walletBalance").innerText = currentAccount;
-    initializeBotAccess();
-  } catch (error) {
-    console.error("Wallet connection failed", error);
-  }
-}
-document.getElementById("connectWallet").addEventListener("click", connectWallet);
-
-// --- Buy with BNB ---
-const presaleContractABI = [
-  "function contributeBNB() public payable",
-  "function contributeUSDT(uint256 amount) external",
-];
-
-async function buyWithBNB() {
-  if (!checkWalletConnected()) return;
-
-  const amountBNB = prompt("Enter amount in BNB:");
-  if (!amountBNB || isNaN(amountBNB)) return alert("Invalid BNB amount.");
-
-  try {
-    const tx = await signer.sendTransaction({
-      to: presaleContractAddress,
-      value: ethers.utils.parseEther(amountBNB)
-    });
-    await tx.wait();
-    alert("BNB contributed successfully!");
-  } catch (error) {
-    console.error(error);
-    alert("Transaction failed.");
+  } else {
+    alert("MetaMask not found!");
   }
 }
 
-// --- Buy with USDT ---
-async function buyWithUSDT() {
-  if (!checkWalletConnected()) return;
+document.getElementById("connectBtn").addEventListener("click", connectWallet);
 
-  const amountUSDT = prompt("Enter amount in USDT:");
-  if (!amountUSDT || isNaN(amountUSDT)) return alert("Invalid USDT amount.");
 
-  const amount = ethers.utils.parseUnits(amountUSDT, 18);
-  const presale = new ethers.Contract(presaleContractAddress, presaleContractABI, signer);
-  const usdt = new ethers.Contract(usdtAddress, USDT_ABI, signer);
-
-  try {
-    const tx1 = await usdt.approve(presaleContractAddress, amount);
-    await tx1.wait();
-    const tx2 = await presale.contributeUSDT(amount);
-    await tx2.wait();
-    alert("USDT contributed successfully!");
-  } catch (err) {
-    console.error(err);
-    alert("USDT contribution failed.");
+// -------- Referral Link --------
+function generateReferralLink() {
+  if (userAddress) {
+    const link = `${window.location.origin}?ref=${userAddress}`;
+    document.getElementById("referralLink").value = link;
   }
 }
-// --- Redeem Rewards (Simulated) ---
-function redeemRewards() {
-  if (!currentAccount) return alert("Connect wallet to redeem.");
-  document.getElementById("rewardBalance").innerText = "0 USDT";
-  alert("Rewards claimed! (Simulation)");
-}
-document.getElementById("redeemBtn").addEventListener("click", redeemRewards);
 
-// --- Referral Copy ---
 function copyReferral() {
-  const link = document.getElementById("refLink");
-  link.select();
-  link.setSelectionRange(0, 99999);
+  const input = document.getElementById("referralLink");
+  input.select();
   document.execCommand("copy");
   alert("Referral link copied!");
 }
-document.getElementById("copyReferralBtn").addEventListener("click", copyReferral);
 
-// --- Bot Key Access ---
-async function getStakedBalanceUSD() {
-  // Simulated staking check
-  return 120;
+
+// -------- Buy Token Functions (Stubbed) --------
+document.getElementById("buyBNB").addEventListener("click", () => {
+  const amount = document.getElementById("bnbAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+  alert(`Buying BHIXU with ${amount} BNB...`);
+  // Web3 smart contract call would go here
+});
+
+document.getElementById("buyUSDT").addEventListener("click", () => {
+  const amount = document.getElementById("usdtAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+  alert(`Buying BHIXU with ${amount} USDT...`);
+  // Web3 smart contract call would go here
+});
+
+
+// -------- Reward System --------
+document.getElementById("checkRewards").addEventListener("click", () => {
+  if (!userAddress) return alert("Connect wallet first");
+  // Fetch referral rewards from smart contract
+  document.getElementById("rewardResult").innerHTML = "You have 150 BHIXU in rewards.";
+});
+
+document.getElementById("redeemRewards").addEventListener("click", () => {
+  if (!userAddress) return alert("Connect wallet first");
+  alert("Rewards redeemed!");
+  // Smart contract interaction to redeem
+});
+
+
+// -------- Bot Key Generation --------
+document.getElementById("generateBotKey").addEventListener("click", () => {
+  if (!userAddress) return alert("Connect wallet first");
+  const key = btoa(userAddress + ":" + Date.now());
+  document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
+});
+
+
+// -------- Whitepaper Slider --------
+const whitepaperSlides = [
+  "BHIKX is a superhero-themed blockchain metaverse.",
+  "Earn by staking, referrals, and completing missions.",
+  "Use BHIXU tokens in-game and in the real world.",
+  "Join the DAO and shape the beggar-free future!"
+];
+
+let currentSlide = 0;
+const whitepaperSlide = document.getElementById("whitepaperSlide");
+
+function showSlide(index) {
+  whitepaperSlide.innerText = whitepaperSlides[index];
 }
 
-function copyBotKey() {
-  const botKey = document.getElementById("botKey");
-  botKey.select();
-  document.execCommand("copy");
-  alert("Bot key copied to clipboard!");
-}
-document.getElementById("copyBotKey").addEventListener("click", copyBotKey);
+document.getElementById("prevSlide").addEventListener("click", () => {
+  currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
+  showSlide(currentSlide);
+});
 
-function launchBot() {
-  alert("Launching your bot... Key is valid!");
-}
-document.getElementById("launchBotBtn").addEventListener("click", launchBot);
+document.getElementById("nextSlide").addEventListener("click", () => {
+  currentSlide = (currentSlide + 1) % whitepaperSlides.length;
+  showSlide(currentSlide);
+});
 
-async function initializeBotAccess() {
-  const balance = await getStakedBalanceUSD(currentAccount);
-  const message = document.getElementById("bot-access-message");
-  const botUI = document.getElementById("bot-ui");
-
-  if (balance >= 100) {
-    const uniqueKey = `BHIKX-${currentAccount.slice(2, 8)}-${Math.random().toString(36).substring(2, 8)}`;
-    document.getElementById("botKey").value = uniqueKey;
-    message.innerHTML = `<span style="color: green;">Access Granted!</span>`;
-    botUI.style.display = "block";
-  } else {
-    message.innerHTML = `<span style="color: red;">Stake $100+ to activate your bot.</span>`;
-    botUI.style.display = "none";
-  }
-}
-function checkWalletConnected() {
-  if (!currentAccount) {
-    alert("Please connect your wallet first.");
-    return false;
-  }
-  return true;
-}
-
-async function buyWithBNB() {
-  if (!checkWalletConnected()) return;
-
-  const amountBNB = prompt("Enter amount in BNB:");
-  if (!amountBNB || isNaN(amountBNB)) return alert("Invalid BNB amount.");
-
-  try {
-    const tx = await signer.sendTransaction({
-      to: presaleAddress,
-      value: ethers.utils.parseEther(amountBNB)
-    });
-    await tx.wait();
-    alert("BNB sent successfully! You'll get BHIKX after presale.");
-  } catch (error) {
-    console.error(error);
-    alert("Transaction failed.");
-  }
-}
-
-async function buyWithUSDT() {
-  if (!checkWalletConnected()) return;
-
-  const amountUSDT = prompt("Enter amount in USDT:");
-  if (!amountUSDT || isNaN(amountUSDT)) return alert("Invalid USDT amount.");
-
-  const amount = ethers.utils.parseUnits(amountUSDT, 18);
-  const usdt = new ethers.Contract(usdtAddress, USDT_ABI, signer);
-
-  try {
-    const tx1 = await usdt.approve(presaleAddress, amount);
-    await tx1.wait();
-    const tx2 = await usdt.transfer(presaleAddress, amount);
-    await tx2.wait();
-    alert("USDT sent successfully! You'll get BHIKX after presale.");
-  } catch (err) {
-    console.error(err);
-    alert("USDT transaction failed.");
-  }
-function showPostWalletUI() {
-  document.getElementById("postWalletUI").style.display = "block";
-  document.getElementById("connectWallet").style.display = "none";
-}
-
-currentAccount = await signer.getAddress();
-document.getElementById("walletBalance").innerText = currentAccount;
-initializeBotAccess();
-showPostWalletUI(); // <-- Add this
+showSlide(currentSlide);
