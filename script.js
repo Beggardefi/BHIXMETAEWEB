@@ -17,6 +17,7 @@ async function setupEthers() {
     utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
   }
 }
+
 // -------- Responsive Navbar Toggle --------
 document.getElementById("hamburger").addEventListener("click", () => {
   const navMenu = document.getElementById("navMenu");
@@ -69,7 +70,29 @@ async function connectWallet() {
 
 document.getElementById("connectBtn").addEventListener("click", connectWallet);
 
+// Get referral address from URL
+function getReferralAddress() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get("ref");
+  return ref && ethers.utils.isAddress(ref) ? ref : userAddress;
+}
 
+document.getElementById("buyBNB").addEventListener("click", async () => {
+  const amount = document.getElementById("bnbAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+
+  try {
+    const refAddress = getReferralAddress();
+    const tx = await utilityContract.buyWithBNB(refAddress, {
+      value: ethers.utils.parseEther(amount)
+    });
+    await tx.wait();
+    alert("BHIXU purchased with BNB!");
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed");
+  }
+});
 // -------- Referral Link --------
 function generateReferralLink() {
   if (userAddress) {
@@ -84,35 +107,71 @@ function copyReferral() {
   document.execCommand("copy");
   alert("Referral link copied!");
 }
+//--------- usdt setup-------//
+const usdtAddress = "0x..."; // Replace with actual USDT token address on your chain
+const erc20Abi = [
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function decimals() view returns (uint8)"
+];
+let usdtContract;
+
+async function setupUSDT() {
+  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
+  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+  return decimals;
+}
+
 
 
 // -------- Buy Token Functions (Stubbed) --------
-document.getElementById("buyBNB").addEventListener("click", () => {
-  const amount = document.getElementById("bnbAmount").value;
-  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-  alert(`Buying BHIXU with ${amount} BNB...`);
-  // Web3 smart contract call would go here
-});
-
-document.getElementById("buyUSDT").addEventListener("click", () => {
+document.getElementById("buyUSDT").addEventListener("click", async () => {
   const amount = document.getElementById("usdtAmount").value;
   if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-  alert(`Buying BHIXU with ${amount} USDT...`);
-  // Web3 smart contract call would go here
+
+  try {
+    const refAddress = getReferralAddress();
+    const decimals = await setupUSDT();
+    const amountInWei = ethers.utils.parseUnits(amount, decimals);
+
+    const approval = await usdtContract.approve(utilityAddress, amountInWei);
+    await approval.wait();
+
+    const tx = await utilityContract.buyWithUSDT(amountInWei, refAddress);
+    await tx.wait();
+
+    alert("BHIXU purchased with USDT!");
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed");
+  }
 });
 
 
 // -------- Reward System --------
-document.getElementById("checkRewards").addEventListener("click", () => {
+document.getElementById("checkRewards").addEventListener("click", async () => {
   if (!userAddress) return alert("Connect wallet first");
-  // Fetch referral rewards from smart contract
-  document.getElementById("rewardResult").innerHTML = "You have 150 BHIXU in rewards.";
+
+  try {
+    const rewards = await utilityContract.referralRewards(userAddress);
+    const formatted = ethers.utils.formatUnits(rewards, 18);
+    document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
+  } catch (err) {
+    console.error(err);
+    alert("Failed to fetch rewards");
+  }
 });
 
-document.getElementById("redeemRewards").addEventListener("click", () => {
+document.getElementById("redeemRewards").addEventListener("click", async () => {
   if (!userAddress) return alert("Connect wallet first");
-  alert("Rewards redeemed!");
-  // Smart contract interaction to redeem
+
+  try {
+    const tx = await utilityContract.redeemRewards();
+    await tx.wait();
+    alert("Rewards successfully redeemed!");
+  } catch (err) {
+    console.error(err);
+    alert("Reward redemption failed");
+  }
 });
 
 
