@@ -75,7 +75,12 @@ function copyReferral() {
 }
 
 // -------- Countdown --------
-const countdown = document.getElementById('countdown');
+let countdown; // define globally
+
+window.addEventListener("DOMContentLoaded", () => {
+  countdown = document.getElementById("countdown");
+  // ...
+});
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
 
 function updateCountdown() {
@@ -200,10 +205,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("copyReferral").addEventListener("click", copyReferral);
 
-  document.getElementById("hamburger").addEventListener("click", () => {
-    document.getElementById("navMenu").classList.toggle("active");
+ const hamburger = document.getElementById("hamburger");
+const navMenu = document.getElementById("navMenu");
+if (hamburger && navMenu) {
+  hamburger.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
   });
-
+}
   showSlide(currentSlide);
   updateCountdown();
   setInterval(updateCountdown, 1000);
