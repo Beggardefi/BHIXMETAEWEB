@@ -1,3 +1,56 @@
+// -------- wallet connect --------
+let web3Modal;
+let provider;
+let signer;
+let utilityContract;
+let userAddress = null;
+
+const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
+const utilityAbi = [
+  "function buyWithBNB(address ref) payable",
+  "function buyWithUSDT(uint256 amount, address ref) external",
+  "function getReferralRewards(address user) view returns (uint256)",
+  "function redeemRewards() external"
+];
+
+async function initWeb3Modal() {
+  const providerOptions = {
+    walletconnect: {
+      package: window.WalletConnectProvider.default,
+      options: {
+        rpc: {
+          56: "https://bsc-dataseed.binance.org/" // Binance Smart Chain Mainnet
+        }
+      }
+    }
+  };
+
+  web3Modal = new window.Web3Modal.default({
+    cacheProvider: true,
+    providerOptions,
+    theme: "dark"
+  });
+}
+
+async function connectWallet() {
+  try {
+    const instance = await web3Modal.connect();
+    provider = new ethers.providers.Web3Provider(instance);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
+    
+    document.getElementById("connectBtn").textContent = "Connected";
+    generateReferralLink();
+  } catch (err) {
+    console.error(err);
+    alert("Wallet connection failed");
+  }
+}
+
+document.getElementById("connectBtn").addEventListener("click", connectWallet);
+window.addEventListener("load", initWeb3Modal);
+// -------- utility tab--------
 let provider, signer, utilityContract;
 
 const utilityAbi = [
