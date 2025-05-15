@@ -26,9 +26,7 @@ async function initWeb3Modal() {
     walletconnect: {
       package: window.WalletConnectProvider.default,
       options: {
-        rpc: {
-          56: "https://bsc-dataseed.binance.org/"
-        }
+        rpc: { 56: "https://bsc-dataseed.binance.org/" }
       }
     }
   };
@@ -40,6 +38,7 @@ async function initWeb3Modal() {
   });
 }
 
+// -------- Wallet Connect --------
 async function connectWallet() {
   try {
     const instance = await web3Modal.connect();
@@ -55,9 +54,6 @@ async function connectWallet() {
     alert("Wallet connection failed");
   }
 }
-
-window.addEventListener("load", initWeb3Modal);
-document.getElementById("connectBtn").addEventListener("click", connectWallet);
 
 // -------- Referral Utilities --------
 function getReferralAddress() {
@@ -78,79 +74,6 @@ function copyReferral() {
   alert("Referral link copied!");
 }
 
-// -------- BNB Purchase --------
-document.getElementById("buyBNB").addEventListener("click", async () => {
-  const amount = document.getElementById("bnbAmount").value;
-  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-
-  try {
-    const ref = getReferralAddress();
-    const tx = await utilityContract.buyWithBNB(ref, {
-      value: ethers.utils.parseEther(amount)
-    });
-    await tx.wait();
-    alert("BHIXU purchased with BNB!");
-  } catch (err) {
-    console.error(err);
-    alert("Transaction failed");
-  }
-});
-
-// -------- USDT Purchase --------
-async function setupUSDT() {
-  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
-  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
-  return decimals;
-}
-
-document.getElementById("buyUSDT").addEventListener("click", async () => {
-  const amount = document.getElementById("usdtAmount").value;
-  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-
-  try {
-    const ref = getReferralAddress();
-    const decimals = await setupUSDT();
-    const amountInWei = ethers.utils.parseUnits(amount, decimals);
-
-    const approval = await usdtContract.approve(utilityAddress, amountInWei);
-    await approval.wait();
-
-    const tx = await utilityContract.buyWithUSDT(amountInWei, ref);
-    await tx.wait();
-    alert("BHIXU purchased with USDT!");
-  } catch (err) {
-    console.error(err);
-    alert("Transaction failed");
-  }
-});
-
-// -------- Referral Rewards --------
-document.getElementById("checkRewards").addEventListener("click", async () => {
-  if (!userAddress) return alert("Connect wallet first");
-
-  try {
-    const rewards = await utilityContract.getReferralRewards(userAddress);
-    const formatted = ethers.utils.formatUnits(rewards, 18);
-    document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
-  } catch (err) {
-    console.error(err);
-    alert("Failed to fetch rewards");
-  }
-});
-
-document.getElementById("redeemRewards").addEventListener("click", async () => {
-  if (!userAddress) return alert("Connect wallet first");
-
-  try {
-    const tx = await utilityContract.redeemRewards();
-    await tx.wait();
-    alert("Rewards successfully redeemed!");
-  } catch (err) {
-    console.error(err);
-    alert("Reward redemption failed");
-  }
-});
-
 // -------- Countdown --------
 const countdown = document.getElementById('countdown');
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
@@ -168,65 +91,101 @@ function updateCountdown() {
 
   countdown.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
 }
-setInterval(updateCountdown, 1000);
-updateCountdown();
 
-// -------- Bot Key --------
-document.getElementById("generateBotKey").addEventListener("click", () => {
-  if (!userAddress) return alert("Connect wallet first");
-  const key = btoa(userAddress + ":" + Date.now());
-  document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
-});
+// -------- USDT Setup --------
+async function setupUSDT() {
+  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
+  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+  return decimals;
+}
 
-// -------- Whitepaper Slider --------
+// -------- Whitepaper Slides --------
 const whitepaperSlides = [
   "BHIKX is a superhero-themed blockchain metaverse.",
   "Earn by staking, referrals, and completing missions.",
   "Use BHIXU tokens in-game and in the real world.",
   "Join the DAO and shape the beggar-free future!"
 ];
-
 let currentSlide = 0;
+
 function showSlide(index) {
   document.getElementById("whitepaperSlide").innerText = whitepaperSlides[index];
 }
-document.getElementById("prevSlide").addEventListener("click", () => {
-  currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
-  showSlide(currentSlide);
-});
-document.getElementById("nextSlide").addEventListener("click", () => {
-  currentSlide = (currentSlide + 1) % whitepaperSlides.length;
-  showSlide(currentSlide);
-});
-showSlide(currentSlide);
 
-// -------- Navbar Toggle --------
-document.getElementById("hamburger").addEventListener("click", () => {
-  document.getElementById("navMenu").classList.toggle("active");
-});
+// -------- DOM Ready --------
 window.addEventListener("DOMContentLoaded", () => {
-  // Attach event listeners safely after DOM is ready
+  initWeb3Modal();
 
   document.getElementById("connectBtn").addEventListener("click", connectWallet);
 
   document.getElementById("buyBNB").addEventListener("click", async () => {
-    // BNB purchase logic here
+    const amount = document.getElementById("bnbAmount").value;
+    if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+
+    try {
+      const ref = getReferralAddress();
+      const tx = await utilityContract.buyWithBNB(ref, {
+        value: ethers.utils.parseEther(amount)
+      });
+      await tx.wait();
+      alert("BHIXU purchased with BNB!");
+    } catch (err) {
+      console.error(err);
+      alert("Transaction failed");
+    }
   });
 
   document.getElementById("buyUSDT").addEventListener("click", async () => {
-    // USDT purchase logic here
+    const amount = document.getElementById("usdtAmount").value;
+    if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+
+    try {
+      const ref = getReferralAddress();
+      const decimals = await setupUSDT();
+      const amountInWei = ethers.utils.parseUnits(amount, decimals);
+
+      const approval = await usdtContract.approve(utilityAddress, amountInWei);
+      await approval.wait();
+
+      const tx = await utilityContract.buyWithUSDT(amountInWei, ref);
+      await tx.wait();
+      alert("BHIXU purchased with USDT!");
+    } catch (err) {
+      console.error(err);
+      alert("Transaction failed");
+    }
   });
 
   document.getElementById("checkRewards").addEventListener("click", async () => {
-    // Check rewards logic
+    if (!userAddress) return alert("Connect wallet first");
+
+    try {
+      const rewards = await utilityContract.getReferralRewards(userAddress);
+      const formatted = ethers.utils.formatUnits(rewards, 18);
+      document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch rewards");
+    }
   });
 
   document.getElementById("redeemRewards").addEventListener("click", async () => {
-    // Redeem rewards logic
+    if (!userAddress) return alert("Connect wallet first");
+
+    try {
+      const tx = await utilityContract.redeemRewards();
+      await tx.wait();
+      alert("Rewards successfully redeemed!");
+    } catch (err) {
+      console.error(err);
+      alert("Reward redemption failed");
+    }
   });
 
   document.getElementById("generateBotKey").addEventListener("click", () => {
-    // Bot key logic
+    if (!userAddress) return alert("Connect wallet first");
+    const key = btoa(userAddress + ":" + Date.now());
+    document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
   });
 
   document.getElementById("prevSlide").addEventListener("click", () => {
@@ -239,10 +198,13 @@ window.addEventListener("DOMContentLoaded", () => {
     showSlide(currentSlide);
   });
 
+  document.getElementById("copyReferral").addEventListener("click", copyReferral);
+
   document.getElementById("hamburger").addEventListener("click", () => {
     document.getElementById("navMenu").classList.toggle("active");
   });
 
-  showSlide(currentSlide); // Whitepaper starts on first slide
-  updateCountdown(); // Start countdown
+  showSlide(currentSlide);
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 });
