@@ -32,13 +32,7 @@ input[type="number"], input[type="text"] { padding: 10px; width: 200px; border-r
 /* Responsive Navbar */ @media (max-width: 768px) { .navbar { flex-wrap: wrap; }
 
 .hamburger { display: block; }
-.nav-menu {
-  display: none;
-}
-.nav-menu.active {
-  display: block;
-}                                                   
-
+                                                   
 #navMenu { width: 100%; display: none; flex-direction: column; background: rgba(16, 16, 16, 0.9); padding: 10px 0; }
 
 #navMenu ul { flex-direction: column; width: 100%; }
