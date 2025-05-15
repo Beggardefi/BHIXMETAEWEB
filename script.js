@@ -1,261 +1,149 @@
-// -------- wallet connect --------
-let web3Modal;
-let provider;
-let signer;
-let utilityContract;
-let userAddress = null;
+import presaleAbi from './abi/Presale.json' assert { type: 'json' };
+import tokenAbi from './abi/BHIXU.json' assert { type: 'json' };
 
-const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
-const utilityAbi = [
-  "function buyWithBNB(address ref) payable",
-  "function buyWithUSDT(uint256 amount, address ref) external",
-  "function getReferralRewards(address user) view returns (uint256)",
-  "function redeemRewards() external"
-];
+const presaleAddress = '0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3';
+const tokenAddress = '0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6';
 
-async function initWeb3Modal() {
-  const providerOptions = {
-    walletconnect: {
-      package: window.WalletConnectProvider.default,
-      options: {
-        rpc: {
-          56: "https://bsc-dataseed.binance.org/" // Binance Smart Chain Mainnet
-        }
-      }
-    }
-  };
+let provider, signer, presale, token, userAddress;
 
-  web3Modal = new window.Web3Modal.default({
-    cacheProvider: true,
-    providerOptions,
-    theme: "dark"
-  });
-}
-
+// Connect wallet
 async function connectWallet() {
-  try {
-    const instance = await web3Modal.connect();
-    provider = new ethers.providers.Web3Provider(instance);
+    if (!window.ethereum) return alert("Install MetaMask");
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
-    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
-    
-    document.getElementById("connectBtn").textContent = "Connected";
-    generateReferralLink();
-  } catch (err) {
-    console.error(err);
-    alert("Wallet connection failed");
-  }
+
+    document.getElementById("connectButton").textContent = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+
+    presale = new ethers.Contract(presaleAddress, presaleAbi, signer);
+    token = new ethers.Contract(tokenAddress, tokenAbi, signer);
+
+    showReferralLink();
+    loadUserVesting();
 }
 
-document.getElementById("connectBtn").addEventListener("click", connectWallet);
-window.addEventListener("load", initWeb3Modal);
-// -------- utility tab--------
-let provider, signer, utilityContract;
+document.getElementById("connectButton").addEventListener("click", connectWallet);
 
-const utilityAbi = [
-  "function buyWithBNB(address ref) payable",
-  "function buyWithUSDT(uint256 amount, address ref) external",
-  "function getReferralRewards(address user) view returns (uint256)",
-  "function redeemRewards() external"
-];
-
-const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3";
-async function setupEthers() {
-  if (window.ethereum) {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = provider.getSigner();
-    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
-  }
-}
-
-// -------- Responsive Navbar Toggle --------
-document.getElementById("hamburger").addEventListener("click", () => {
-  const navMenu = document.getElementById("navMenu");
-  navMenu.classList.toggle("active");
-});
-
-// -------- Countdown Timer --------
-const countdown = document.getElementById('countdown');
+// Countdown
+const countdownEl = document.getElementById("countdown");
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
+
 function updateCountdown() {
-  const now = new Date().getTime();
-  const distance = endDate - now;
+    const now = new Date().getTime();
+    const diff = endDate - now;
+    if (diff <= 0) return countdownEl.textContent = "Presale Ended";
 
-  if (distance < 0) {
-    countdown.innerHTML = "Presale Ended";
-    return;
-  }
-
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s`;
 }
-
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
+// Dynamic token price
+const basePrice = 0.01;
+const launchDate = new Date("2025-05-14T00:00:00Z").getTime();
 
-// -------- Wallet Connection --------
-let userAddress = null;
+function getCurrentPrice() {
+    const now = new Date().getTime();
+    const days = Math.floor((now - launchDate) / (1000 * 60 * 60 * 24));
+    return (basePrice * Math.pow(1.0025, days)).toFixed(6);
+}
 
-async function connectWallet() {
-  if (window.ethereum) {
-    try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      userAddress = accounts[0];
-      document.getElementById("connectBtn").textContent = "Connected";
-      generateReferralLink();
-      await setupEthers();
-    } catch (error) {
-      alert("Wallet connection failed");
+function updatePriceUI() {
+    document.getElementById("currentPrice").textContent = `$${getCurrentPrice()} per BHIX`;
+}
+setInterval(updatePriceUI, 60000);
+updatePriceUI();
+
+// Show referral link
+function showReferralLink() {
+    const link = `${location.origin}?ref=${userAddress}`;
+    const el = document.getElementById("referralLink");
+    el.value = link;
+    el.readOnly = true;
+}
+
+// Copy referral
+document.getElementById("copyReferral").addEventListener("click", () => {
+    const el = document.getElementById("referralLink");
+    navigator.clipboard.writeText(el.value);
+    alert("Referral link copied!");
+});
+
+// Buy tokens
+document.getElementById("buyBtn").addEventListener("click", async () => {
+    const amount = parseFloat(document.getElementById("buyAmount").value || "0");
+    const currency = document.querySelector("input[name='currency']:checked").value;
+    if (!amount || amount <= 0) return alert("Invalid amount");
+
+    const ref = new URLSearchParams(window.location.search).get("ref") || ethers.constants.AddressZero;
+    const price = parseFloat(getCurrentPrice());
+    const bhixAmount = (amount / price).toFixed(2);
+
+    if (currency === "BNB") {
+        const tx = await presale.buyWithBNB(ref, { value: ethers.utils.parseEther(amount.toString()) });
+        await tx.wait();
+    } else if (currency === "USDT") {
+        const usdt = new ethers.Contract(await presale.USDT(), ["function approve(address,uint256) external returns (bool)"], signer);
+        const amt = ethers.utils.parseUnits(amount.toString(), 18);
+        await usdt.approve(presaleAddress, amt);
+        const tx = await presale.buyWithUSDT(amt, ref);
+        await tx.wait();
     }
-  } else {
-    alert("MetaMask not found!");
-  }
-}
 
-document.getElementById("connectBtn").addEventListener("click", connectWallet);
+    alert(`Purchased approx. ${bhixAmount} BHIX`);
+    loadUserVesting();
+});
 
-// Get referral address from URL
-function getReferralAddress() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const ref = urlParams.get("ref");
-  return ref && ethers.utils.isAddress(ref) ? ref : userAddress;
-}
-
-document.getElementById("buyBNB").addEventListener("click", async () => {
-  const amount = document.getElementById("bnbAmount").value;
-  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-
-  try {
-    const refAddress = getReferralAddress();
-    const tx = await utilityContract.buyWithBNB(refAddress, {
-      value: ethers.utils.parseEther(amount)
-    });
+// Redeem referral rewards
+document.getElementById("redeemReward").addEventListener("click", async () => {
+    const tx = await presale.claimReferralReward();
     await tx.wait();
-    alert("BHIXU purchased with BNB!");
-  } catch (err) {
-    console.error(err);
-    alert("Transaction failed");
-  }
-});
-// -------- Referral Link --------
-function generateReferralLink() {
-  if (userAddress) {
-    const link = `${window.location.origin}?ref=${userAddress}`;
-    document.getElementById("referralLink").value = link;
-  }
-}
-
-function copyReferral() {
-  const input = document.getElementById("referralLink");
-  input.select();
-  document.execCommand("copy");
-  alert("Referral link copied!");
-}
-//--------- usdt setup-------//
-const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // if on BSC
-const erc20Abi = [
-  "function approve(address spender, uint256 amount) external returns (bool)",
-  "function decimals() view returns (uint8)"
-];
-let usdtContract;
-
-async function setupUSDT() {
-  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
-  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
-  return decimals;
-}
-
-
-
-// -------- Buy Token Functions (Stubbed) --------
-document.getElementById("buyUSDT").addEventListener("click", async () => {
-  const amount = document.getElementById("usdtAmount").value;
-  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-
-  try {
-    const refAddress = getReferralAddress();
-    const decimals = await setupUSDT();
-    const amountInWei = ethers.utils.parseUnits(amount, decimals);
-
-    const approval = await usdtContract.approve(utilityAddress, amountInWei);
-    await approval.wait();
-
-    const tx = await utilityContract.buyWithUSDT(amountInWei, refAddress);
-    await tx.wait();
-
-    alert("BHIXU purchased with USDT!");
-  } catch (err) {
-    console.error(err);
-    alert("Transaction failed");
-  }
+    alert("Referral reward claimed.");
 });
 
-
-// -------- Reward System --------
-document.getElementById("checkRewards").addEventListener("click", async () => {
-  if (!userAddress) return alert("Connect wallet first");
-
-  try {
-    const rewards = await utilityContract.referralRewards(userAddress);
-    const formatted = ethers.utils.formatUnits(rewards, 18);
-    document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
-  } catch (err) {
-    console.error(err);
-    alert("Failed to fetch rewards");
-  }
-});
-
-document.getElementById("redeemRewards").addEventListener("click", async () => {
-  if (!userAddress) return alert("Connect wallet first");
-
-  try {
-    const tx = await utilityContract.redeemRewards();
-    await tx.wait();
-    alert("Rewards successfully redeemed!");
-  } catch (err) {
-    console.error(err);
-    alert("Reward redemption failed");
-  }
-});
-
-
-// -------- Bot Key Generation --------
+// Bot Key Generation
 document.getElementById("generateBotKey").addEventListener("click", () => {
-  if (!userAddress) return alert("Connect wallet first");
-  const key = btoa(userAddress + ":" + Date.now());
-  document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
+    if (!userAddress) return alert("Connect wallet first");
+    const key = "BHIKX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    document.getElementById("botKey").textContent = `Your Bot Key: ${key}`;
 });
 
+// Vesting Info
+async function loadUserVesting() {
+    if (!userAddress) return;
 
-// -------- Whitepaper Slider --------
-const whitepaperSlides = [
-  "BHIKX is a superhero-themed blockchain metaverse.",
-  "Earn by staking, referrals, and completing missions.",
-  "Use BHIXU tokens in-game and in the real world.",
-  "Join the DAO and shape the beggar-free future!"
-];
+    const [total, claimed, nextTime] = await Promise.all([
+        presale.tokenAllocated(userAddress),
+        presale.claimed(userAddress),
+        presale.nextUnlockTime(userAddress)
+    ]);
 
+    document.getElementById("myTokens").textContent = `Total: ${ethers.utils.formatUnits(total, 18)} BHIX`;
+    document.getElementById("unlockedTokens").textContent = `Claimed: ${ethers.utils.formatUnits(claimed, 18)} BHIX`;
+    document.getElementById("nextUnlock").textContent = `Next Unlock: ${new Date(nextTime * 1000).toLocaleDateString()}`;
+}
+
+// Whitepaper Slider
 let currentSlide = 0;
-const whitepaperSlide = document.getElementById("whitepaperSlide");
+const slides = document.querySelectorAll(".whitepaper-slide");
 
-function showSlide(index) {
-  whitepaperSlide.innerText = whitepaperSlides[index];
+function showSlide(n) {
+    slides.forEach((s, i) => s.style.display = (i === n ? "block" : "none"));
 }
 
 document.getElementById("prevSlide").addEventListener("click", () => {
-  currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
-  showSlide(currentSlide);
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(currentSlide);
 });
-
 document.getElementById("nextSlide").addEventListener("click", () => {
-  currentSlide = (currentSlide + 1) % whitepaperSlides.length;
-  showSlide(currentSlide);
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
 });
 
 showSlide(currentSlide);
