@@ -76,18 +76,16 @@ function copyReferral() {
 
 // -------- Countdown --------
 let countdown; // define globally
-
-window.addEventListener("DOMContentLoaded", () => {
-  countdown = document.getElementById("countdown");
-  // ...
-});
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
 
 function updateCountdown() {
   const now = new Date().getTime();
   const distance = endDate - now;
 
-  if (distance < 0) return countdown.innerHTML = "Presale Ended";
+  if (distance < 0) {
+    countdown.innerHTML = "Presale Ended";
+    return;
+  }
 
   const d = Math.floor(distance / (1000 * 60 * 60 * 24));
   const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -96,6 +94,17 @@ function updateCountdown() {
 
   countdown.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  countdown = document.getElementById("countdown");
+  if (!countdown) {
+    console.error("Countdown element not found!");
+    return;
+  }
+
+  updateCountdown(); // start immediately
+  setInterval(updateCountdown, 1000); // repeat every second
+});
 
 // -------- USDT Setup --------
 async function setupUSDT() {
@@ -212,7 +221,4 @@ if (hamburger && navMenu) {
     navMenu.classList.toggle("active");
   });
 }
-  showSlide(currentSlide);
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-});
+  
