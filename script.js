@@ -1,559 +1,485 @@
-// ==== CONFIGURATION ====
-const PRESALE_ADDRESS = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3";
-const BHIX_ABI = [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_referrer",
-				"type": "address"
-			}
-		],
-		"name": "buyWithBNB",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_referrer",
-				"type": "address"
-			}
-		],
-		"name": "buyWithUSDT",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claimReferralReward",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bool",
-				"name": "_status",
-				"type": "bool"
-			}
-		],
-		"name": "pausePresale",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_bhixToken",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_usdtToken",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_startTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_endTime",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "newPrice",
-				"type": "uint256"
-			}
-		],
-		"name": "PriceUpdated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amountBHIX",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "ref",
-				"type": "address"
-			}
-		],
-		"name": "Purchased",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_newEndTime",
-				"type": "uint256"
-			}
-		],
-		"name": "updateEndTime",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_newPrice",
-				"type": "uint256"
-			}
-		],
-		"name": "updateTokenPrice",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawFunds",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "bnb",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "usdt",
-				"type": "uint256"
-			}
-		],
-		"name": "Withdrawn",
-		"type": "event"
-	},
-	{
-		"stateMutability": "payable",
-		"type": "receive"
-	},
-	{
-		"inputs": [],
-		"name": "bhixToken",
-		"outputs": [
-			{
-				"internalType": "contract IBEP20",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "contributions",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "contributors",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "endTime",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getBNBPrice",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "presalePaused",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "referralRewards",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "referrer",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "softCap",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "startTime",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "tokenPrice",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalRaisedUSD",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "usdtToken",
-		"outputs": [
-			{
-				"internalType": "contract IBEP20",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]; // 
+// -------- wallet connect --------
+let web3Modal;
+let provider;
+let signer;
+let utilityContract;
+let userAddress = null;
 
-const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // BSC Mainnet USDT
-const USDT_ABI = [
-  "function approve(address spender, uint256 amount) public returns (bool)",
-  "function allowance(address owner, address spender) public view returns (uint256)",
-  "function balanceOf(address account) external view returns (uint256)",
-  "function decimals() view returns (uint8)"
+const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
+const utilityAbi = [
+  "function buyWithBNB(address ref) payable",
+  "function buyWithUSDT(uint256 amount, address ref) external",
+  "function getReferralRewards(address user) view returns (uint256)",
+  "function redeemRewards() external"
 ];
 
-let provider, signer, contract, userAddress;
+async function initWeb3Modal() {
+  const providerOptions = {
+    walletconnect: {
+      package: window.WalletConnectProvider.default,
+      options: {
+        rpc: {
+          56: "https://bsc-dataseed.binance.org/" // Binance Smart Chain Mainnet
+        }
+      }
+    }
+  };
 
-// ==== INIT ====
-async function init() {
-  provider = new ethers.providers.Web3Provider(window.ethereum);
-  signer = provider.getSigner();
-  contract = new ethers.Contract(PRESALE_ADDRESS, BHIX_ABI, signer);
-  userAddress = await signer.getAddress();
-
-  // Generate referral link
-  const referralLink = `${window.location.origin}?ref=${userAddress}`;
-  document.getElementById("referralLink").value = referralLink;
+  web3Modal = new window.Web3Modal.default({
+    cacheProvider: true,
+    providerOptions,
+    theme: "dark"
+  });
 }
 
-// ==== CONNECT WALLET ====
-document.getElementById("connectBtn").addEventListener("click", async () => {
+async function connectWallet() {
+  try {
+    const instance = await web3Modal.connect();
+    provider = new ethers.providers.Web3Provider(instance);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
+    
+    document.getElementById("connectBtn").textContent = "Connected";
+    generateReferralLink();
+  } catch (err) {
+    console.error(err);
+    alert("Wallet connection failed");
+  }
+}
+
+document.getElementById("connectBtn").addEventListener("click", connectWallet);
+window.addEventListener("load", initWeb3Modal);
+// -------- utility tab--------
+let provider, signer, utilityContract;
+
+const utilityAbi = [
+  "function buyWithBNB(address ref) payable",
+  "function buyWithUSDT(uint256 amount, address ref) external",
+  "function getReferralRewards(address user) view returns (uint256)",
+  "function redeemRewards() external"
+];
+
+const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3";
+async function setupEthers() {
   if (window.ethereum) {
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-    await init();
-    alert("Wallet Connected: " + userAddress);
-  } else {
-    alert("Install MetaMask to use this dApp!");
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
   }
+}
+
+// -------- Responsive Navbar Toggle --------
+document.getElementById("hamburger").addEventListener("click", () => {
+  const navMenu = document.getElementById("navMenu");
+  navMenu.classList.toggle("active");
 });
 
-// ==== BUY WITH BNB ====
+// -------- Countdown Timer --------
+const countdown = document.getElementById('countdown');
+const endDate = new Date("2025-07-31T23:59:59Z").getTime();
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = endDate - now;
+
+  if (distance < 0) {
+    countdown.innerHTML = "Presale Ended";
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+
+// -------- Wallet Connection --------
+
+// Get referral address from URL
+function getReferralAddress() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get("ref");
+  return ref && ethers.utils.isAddress(ref) ? ref : userAddress;
+}
+
 document.getElementById("buyBNB").addEventListener("click", async () => {
-  const bnbAmount = document.getElementById("bnbAmount").value;
-  const ref = new URLSearchParams(window.location.search).get("ref") || ethers.constants.AddressZero;
+  const amount = document.getElementById("bnbAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
 
   try {
-    const tx = await contract.buyWithBNB(ref, { value: ethers.utils.parseEther(bnbAmount) });
+    const refAddress = getReferralAddress();
+    const tx = await utilityContract.buyWithBNB(refAddress, {
+      value: ethers.utils.parseEther(amount)
+    });
     await tx.wait();
-    alert("BNB Purchase Successful");
-  } catch (error) {
-    console.error(error);
-    alert("BNB Purchase Failed");
+    alert("BHIXU purchased with BNB!");
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed");
   }
 });
-
-// ==== BUY WITH USDT ====
-document.getElementById("buyUSDT").addEventListener("click", async () => {
-  const usdtAmount = document.getElementById("usdtAmount").value;
-  const ref = new URLSearchParams(window.location.search).get("ref") || ethers.constants.AddressZero;
-
-  const usdt = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer);
-  const decimals = await usdt.decimals();
-  const amount = ethers.utils.parseUnits(usdtAmount, decimals);
-
-  try {
-    const allowance = await usdt.allowance(userAddress, PRESALE_ADDRESS);
-    if (allowance.lt(amount)) {
-      const tx1 = await usdt.approve(PRESALE_ADDRESS, amount);
-      await tx1.wait();
-    }
-
-    const tx2 = await contract.buyWithUSDT(amount, ref);
-    await tx2.wait();
-    alert("USDT Purchase Successful");
-  } catch (error) {
-    console.error(error);
-    alert("USDT Purchase Failed");
+// -------- Referral Link --------
+function generateReferralLink() {
+  if (userAddress) {
+    const link = `${window.location.origin}?ref=${userAddress}`;
+    document.getElementById("referralLink").value = link;
   }
-});
+}
 
-// ==== COPY REFERRAL ====
 function copyReferral() {
   const input = document.getElementById("referralLink");
   input.select();
   document.execCommand("copy");
   alert("Referral link copied!");
 }
-
-// ==== CHECK REWARDS ====
-document.getElementById("checkRewards").addEventListener("click", async () => {
-  try {
-    const rewards = await contract.rewards(userAddress);
-    document.getElementById("rewardResult").innerText = `My Rewards: ${ethers.utils.formatEther(rewards)} BHIXU`;
-  } catch (err) {
-    console.error(err);
-    alert("Could not fetch rewards");
-  }
-});
-
-// ==== REDEEM REWARDS ====
-document.getElementById("redeemRewards").addEventListener("click", async () => {
-  try {
-    const tx = await contract.redeemRewards();
-    await tx.wait();
-    alert("Rewards Redeemed!");
-  } catch (err) {
-    console.error(err);
-    alert("Redeem Failed");
-  }
-});
-
-// ==== BOT KEY ====
-document.getElementById("generateBotKey").addEventListener("click", async () => {
-  try {
-    const key = await contract.getBotKey(userAddress);
-    document.getElementById("botKeyDisplay").innerText = `Your Bot Key: ${key}`;
-  } catch (err) {
-    console.error(err);
-    alert("Bot key generation failed");
-  }
-});
-
-// ==== COUNTDOWN TIMER ====
-const countdownEl = document.getElementById("countdown");
-const endTime = new Date("2025-07-31T23:59:59Z").getTime();
-setInterval(() => {
-  const now = Date.now();
-  const diff = endTime - now;
-
-  if (diff <= 0) {
-    countdownEl.innerText = "Presale Ended";
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  countdownEl.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-}, 1000);
-
-// ==== WHITEPAPER SLIDER ====
-const slides = [
-  "Superhero Economy: Stake and earn with real impact.",
-  "NFTs with Superpowers: Own, level up, and trade heroes.",
-  "DAO Governance: Community decisions shape the future.",
-  "Beggar-Free Mission: Ending poverty through web3."
+//--------- usdt setup-------//
+const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // if on BSC
+const erc20Abi = [
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function decimals() view returns (uint8)"
 ];
+let usdtContract;
+
+async function setupUSDT() {
+  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
+  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+  return decimals;
+}
+
+
+
+// -------- Buy Token Functions (Stubbed) --------
+document.getElementById("buyUSDT").addEventListener("click", async () => {
+  const amount = document.getElementById("usdtAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+
+  try {
+    const refAddress = getReferralAddress();
+    const decimals = await setupUSDT();
+    const amountInWei = ethers.utils.parseUnits(amount, decimals);
+
+    const approval = await usdtContract.approve(utilityAddress, amountInWei);
+    await approval.wait();
+
+    const tx = await utilityContract.buyWithUSDT(amountInWei, refAddress);
+    await tx.wait();
+
+    alert("BHIXU purchased with USDT!");
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed");
+  }
+});
+
+
+// -------- Reward System --------
+document.getElementById("checkRewards").addEventListener("click", async () => {
+  if (!userAddress) return alert("Connect wallet first");
+
+  try {
+    const rewards = await utilityContract.referralRewards(userAddress);
+    const formatted = ethers.utils.formatUnits(rewards, 18);
+    document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
+  } catch (err) {
+    console.error(err);
+    alert("Failed to fetch rewards");
+  }
+});
+
+document.getElementById("redeemRewards").addEventListener("click", async () => {
+  if (!userAddress) return alert("Connect wallet first");
+
+  try {
+    const tx = await utilityContract.redeemRewards();
+    await tx.wait();
+    alert("Rewards successfully redeemed!");
+  } catch (err) {
+    console.error(err);
+    alert("Reward redemption failed");
+  }
+});
+
+
+// -------- Bot Key Generation --------
+document.getElementById("generateBotKey").addEventListener("click", () => {
+  if (!userAddress) return alert("Connect wallet first");
+  const key = btoa(userAddress + ":" + Date.now());
+  document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
+});
+
+
+// -------- Whitepaper Slider --------
+const whitepaperSlides = [
+  "BHIKX is a superhero-themed blockchain metaverse.",
+  "Earn by staking, referrals, and completing missions.",
+  "Use BHIXU tokens in-game and in the real world.",
+  "Join the DAO and shape the beggar-free future!"
+];
+
 let currentSlide = 0;
+const whitepaperSlide = document.getElementById("whitepaperSlide");
 
 function showSlide(index) {
-  document.getElementById("whitepaperSlide").innerText = slides[index];
+  whitepaperSlide.innerText = whitepaperSlides[index];
 }
 
 document.getElementById("prevSlide").addEventListener("click", () => {
-  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-  showSlide(currentSlide);
-});
-document.getElementById("nextSlide").addEventListener("click", () => {
-  currentSlide = (currentSlide + 1) % slides.length;
-  showSlide(currentSlide);
-});
+  // -------- wallet connect --------
+let web3Modal;
+let provider;
+let signer;
+let utilityContract;
+let userAddress = null;
 
-showSlide(currentSlide); // Initial slide
+const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
+const utilityAbi = [
+  "function buyWithBNB(address ref) payable",
+  "function buyWithUSDT(uint256 amount, address ref) external",
+  "function getReferralRewards(address user) view returns (uint256)",
+  "function redeemRewards() external"
+];
 
-// ==== NAVBAR TOGGLE ====
+async function initWeb3Modal() {
+  const providerOptions = {
+    walletconnect: {
+      package: window.WalletConnectProvider.default,
+      options: {
+        rpc: {
+          56: "https://bsc-dataseed.binance.org/" // Binance Smart Chain Mainnet
+        }
+      }
+    }
+  };
+
+  web3Modal = new window.Web3Modal.default({
+    cacheProvider: true,
+    providerOptions,
+    theme: "dark"
+  });
+}
+
+async function connectWallet() {
+  try {
+    const instance = await web3Modal.connect();
+    provider = new ethers.providers.Web3Provider(instance);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
+    
+    document.getElementById("connectBtn").textContent = "Connected";
+    generateReferralLink();
+  } catch (err) {
+    console.error(err);
+    alert("Wallet connection failed");
+  }
+}
+
+document.getElementById("connectBtn").addEventListener("click", connectWallet);
+window.addEventListener("load", initWeb3Modal);
+// -------- utility tab--------
+let provider, signer, utilityContract;
+
+const utilityAbi = [
+  "function buyWithBNB(address ref) payable",
+  "function buyWithUSDT(uint256 amount, address ref) external",
+  "function getReferralRewards(address user) view returns (uint256)",
+  "function redeemRewards() external"
+];
+
+const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3";
+async function setupEthers() {
+  if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
+  }
+}
+
+// -------- Responsive Navbar Toggle --------
 document.getElementById("hamburger").addEventListener("click", () => {
-  const nav = document.getElementById("navMenu");
-  nav.classList.toggle("open");
+  const navMenu = document.getElementById("navMenu");
+  navMenu.classList.toggle("active");
 });
+
+// -------- Countdown Timer --------
+const countdown = document.getElementById('countdown');
+const endDate = new Date("2025-07-31T23:59:59Z").getTime();
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = endDate - now;
+
+  if (distance < 0) {
+    countdown.innerHTML = "Presale Ended";
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+
+// -------- Wallet Connection --------
+
+// Get referral address from URL
+function getReferralAddress() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get("ref");
+  return ref && ethers.utils.isAddress(ref) ? ref : userAddress;
+}
+
+document.getElementById("buyBNB").addEventListener("click", async () => {
+  const amount = document.getElementById("bnbAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+
+  try {
+    const refAddress = getReferralAddress();
+    const tx = await utilityContract.buyWithBNB(refAddress, {
+      value: ethers.utils.parseEther(amount)
+    });
+    await tx.wait();
+    alert("BHIXU purchased with BNB!");
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed");
+  }
+});
+// -------- Referral Link --------
+function generateReferralLink() {
+  if (userAddress) {
+    const link = `${window.location.origin}?ref=${userAddress}`;
+    document.getElementById("referralLink").value = link;
+  }
+}
+
+function copyReferral() {
+  const input = document.getElementById("referralLink");
+  input.select();
+  document.execCommand("copy");
+  alert("Referral link copied!");
+}
+//--------- usdt setup-------//
+const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // if on BSC
+const erc20Abi = [
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function decimals() view returns (uint8)"
+];
+let usdtContract;
+
+async function setupUSDT() {
+  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
+  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+  return decimals;
+}
+
+
+
+// -------- Buy Token Functions (Stubbed) --------
+document.getElementById("buyUSDT").addEventListener("click", async () => {
+  const amount = document.getElementById("usdtAmount").value;
+  if (!userAddress || !amount) return alert("Connect wallet and enter amount");
+
+  try {
+    const refAddress = getReferralAddress();
+    const decimals = await setupUSDT();
+    const amountInWei = ethers.utils.parseUnits(amount, decimals);
+
+    const approval = await usdtContract.approve(utilityAddress, amountInWei);
+    await approval.wait();
+
+    const tx = await utilityContract.buyWithUSDT(amountInWei, refAddress);
+    await tx.wait();
+
+    alert("BHIXU purchased with USDT!");
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed");
+  }
+});
+
+
+// -------- Reward System --------
+document.getElementById("checkRewards").addEventListener("click", async () => {
+  if (!userAddress) return alert("Connect wallet first");
+
+  try {
+    const rewards = await utilityContract.referralRewards(userAddress);
+    const formatted = ethers.utils.formatUnits(rewards, 18);
+    document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
+  } catch (err) {
+    console.error(err);
+    alert("Failed to fetch rewards");
+  }
+});
+
+document.getElementById("redeemRewards").addEventListener("click", async () => {
+  if (!userAddress) return alert("Connect wallet first");
+
+  try {
+    const tx = await utilityContract.redeemRewards();
+    await tx.wait();
+    alert("Rewards successfully redeemed!");
+  } catch (err) {
+    console.error(err);
+    alert("Reward redemption failed");
+  }
+});
+
+
+// -------- Bot Key Generation --------
+document.getElementById("generateBotKey").addEventListener("click", () => {
+  if (!userAddress) return alert("Connect wallet first");
+  const key = btoa(userAddress + ":" + Date.now());
+  document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
+});
+
+
+// -------- Whitepaper Slider --------
+const whitepaperSlides = [
+  "BHIKX is a superhero-themed blockchain metaverse.",
+  "Earn by staking, referrals, and completing missions.",
+  "Use BHIXU tokens in-game and in the real world.",
+  "Join the DAO and shape the beggar-free future!"
+];
+
+let currentSlide = 0;
+const whitepaperSlide = document.getElementById("whitepaperSlide");
+
+function showSlide(index) {
+  whitepaperSlide.innerText = whitepaperSlides[index];
+}
+
+document.getElementById("prevSlide").addEventListener("click", () => {
+  currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
+  showSlide(currentSlide);
+});
+
+document.getElementById("nextSlide").addEventListener("click", () => {
+  currentSlide = (currentSlide + 1) % whitepaperSlides.length;
+  showSlide(currentSlide);
+});
+
+showSlide(currentSlide);
+currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
+  showSlide(currentSlide);
+});
+
+document.getElementById("nextSlide").addEventListener("click", () => {
+  currentSlide = (currentSlide + 1) % whitepaperSlides.length;
+  showSlide(currentSlide);
+});
+
+showSlide(currentSlide);
+	    
