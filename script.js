@@ -204,3 +204,45 @@ showSlide(currentSlide);
 document.getElementById("hamburger").addEventListener("click", () => {
   document.getElementById("navMenu").classList.toggle("active");
 });
+window.addEventListener("DOMContentLoaded", () => {
+  // Attach event listeners safely after DOM is ready
+
+  document.getElementById("connectBtn").addEventListener("click", connectWallet);
+
+  document.getElementById("buyBNB").addEventListener("click", async () => {
+    // BNB purchase logic here
+  });
+
+  document.getElementById("buyUSDT").addEventListener("click", async () => {
+    // USDT purchase logic here
+  });
+
+  document.getElementById("checkRewards").addEventListener("click", async () => {
+    // Check rewards logic
+  });
+
+  document.getElementById("redeemRewards").addEventListener("click", async () => {
+    // Redeem rewards logic
+  });
+
+  document.getElementById("generateBotKey").addEventListener("click", () => {
+    // Bot key logic
+  });
+
+  document.getElementById("prevSlide").addEventListener("click", () => {
+    currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
+    showSlide(currentSlide);
+  });
+
+  document.getElementById("nextSlide").addEventListener("click", () => {
+    currentSlide = (currentSlide + 1) % whitepaperSlides.length;
+    showSlide(currentSlide);
+  });
+
+  document.getElementById("hamburger").addEventListener("click", () => {
+    document.getElementById("navMenu").classList.toggle("active");
+  });
+
+  showSlide(currentSlide); // Whitepaper starts on first slide
+  updateCountdown(); // Start countdown
+});
