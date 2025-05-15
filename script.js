@@ -1,15 +1,13 @@
 let provider, signer, utilityContract;
 
 const utilityAbi = [
-  // Add only used functions here, like:
   "function buyWithBNB(address ref) payable",
   "function buyWithUSDT(uint256 amount, address ref) external",
   "function getReferralRewards(address user) view returns (uint256)",
   "function redeemRewards() external"
 ];
 
-const utilityAddress = "0x7380Be8D02b767D6E1071FD562222A15F512D5a6";
-
+const utilityAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3";
 async function setupEthers() {
   if (window.ethereum) {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -26,8 +24,7 @@ document.getElementById("hamburger").addEventListener("click", () => {
 
 // -------- Countdown Timer --------
 const countdown = document.getElementById('countdown');
-const endDate = new Date("2025-06-30T23:59:59Z").getTime();
-
+const endDate = new Date("2025-07-31T23:59:59Z").getTime();
 function updateCountdown() {
   const now = new Date().getTime();
   const distance = endDate - now;
