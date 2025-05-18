@@ -69,13 +69,13 @@ function generateReferralLink() {
 
 function copyReferral() {
   const input = document.getElementById("referralLink");
-  input.select();
-  document.execCommand("copy");
-  alert("Referral link copied!");
+  navigator.clipboard.writeText(input.value)
+    .then(() => alert("Referral link copied!"))
+    .catch(err => console.error("Failed to copy", err));
 }
 
 // -------- Countdown --------
-let countdown; // define globally
+let countdown;
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
 
 function updateCountdown() {
@@ -94,17 +94,6 @@ function updateCountdown() {
 
   countdown.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-  countdown = document.getElementById("countdown");
-  if (!countdown) {
-    console.error("Countdown element not found!");
-    return;
-  }
-
-  updateCountdown(); // start immediately
-  setInterval(updateCountdown, 1000); // repeat every second
-});
 
 // -------- USDT Setup --------
 async function setupUSDT() {
@@ -129,14 +118,23 @@ function showSlide(index) {
 // -------- DOM Ready --------
 window.addEventListener("DOMContentLoaded", () => {
   initWeb3Modal();
+  countdown = document.getElementById("countdown");
+  if (countdown) {
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+
+  showSlide(currentSlide); // Show first whitepaper slide
 
   document.getElementById("connectBtn").addEventListener("click", connectWallet);
 
   document.getElementById("buyBNB").addEventListener("click", async () => {
     const amount = document.getElementById("bnbAmount").value;
+    const buyBtn = document.getElementById("buyBNB");
     if (!userAddress || !amount) return alert("Connect wallet and enter amount");
 
     try {
+      buyBtn.disabled = true;
       const ref = getReferralAddress();
       const tx = await utilityContract.buyWithBNB(ref, {
         value: ethers.utils.parseEther(amount)
@@ -146,14 +144,18 @@ window.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error(err);
       alert("Transaction failed");
+    } finally {
+      buyBtn.disabled = false;
     }
   });
 
   document.getElementById("buyUSDT").addEventListener("click", async () => {
     const amount = document.getElementById("usdtAmount").value;
+    const buyBtn = document.getElementById("buyUSDT");
     if (!userAddress || !amount) return alert("Connect wallet and enter amount");
 
     try {
+      buyBtn.disabled = true;
       const ref = getReferralAddress();
       const decimals = await setupUSDT();
       const amountInWei = ethers.utils.parseUnits(amount, decimals);
@@ -167,6 +169,8 @@ window.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error(err);
       alert("Transaction failed");
+    } finally {
+      buyBtn.disabled = false;
     }
   });
 
@@ -212,13 +216,16 @@ window.addEventListener("DOMContentLoaded", () => {
     showSlide(currentSlide);
   });
 
-  document.getElementById("copyReferral").addEventListener("click", copyReferral);
+  const copyBtn = document.getElementById("copyReferral");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", copyReferral);
+  }
 
- const hamburger = document.getElementById("hamburger");
-const navMenu = document.getElementById("navMenu");
-if (hamburger && navMenu) {
-  hamburger.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
-  });
-}
-  
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  if (hamburger && navMenu) {
+    hamburger.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
+  }
+});
