@@ -57,7 +57,7 @@ async function initWeb3Modal() {
 // -------- Wallet Connect --------
 async function connectWallet() {
   try {
-    const provider = await window.web3Modal.openModal(); // Opens the modal
+    const provider = await window.web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     signer = ethersProvider.getSigner();
     userAddress = await signer.getAddress();
