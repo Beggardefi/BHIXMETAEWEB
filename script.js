@@ -21,36 +21,52 @@ const erc20Abi = [
 let usdtContract;
 
 // -------- Web3Modal Setup --------
+
 async function initWeb3Modal() {
-  const providerOptions = {
-    walletconnect: {
-      package: window.WalletConnectProvider.default,
-      options: {
-        rpc: { 56: "https://bsc-dataseed.binance.org/" }
-      }
+  const chains = [
+    {
+      chainId: 56,
+      name: 'Binance Smart Chain',
+      currency: 'BNB',
+      explorerUrl: 'https://bscscan.com',
+      rpcUrl: 'https://bsc-dataseed.binance.org/'
     }
+  ];
+
+  const metadata = {
+    name: "BHIKX",
+    description: "BHIKX Superhero Metaverse",
+    url: "https://your-dapp-url.com", // change to your actual domain
+    icons: ["https://your-dapp-url.com/logo.png"] // optional icon
   };
 
-  web3Modal = new window.Web3Modal.default({
-    cacheProvider: true,
-    providerOptions,
-    theme: "dark"
+  const ethereumClient = new window.EthereumClient({
+    chains,
+    projectId: "9bb77bfd32a850e43324d0b8c8ff41dc",
+    metadata
   });
-}
 
+  window.web3Modal = new window.Web3Modal({
+    projectId: "9bb77bfd32a850e43324d0b8c8ff41dc",
+    themeMode: "dark",
+    themeVariables: {
+      "--w3m-accent": "#f9a826"
+    }
+  }, ethereumClient);
+}
 // -------- Wallet Connect --------
 async function connectWallet() {
   try {
-    const instance = await web3Modal.connect();
-    provider = new ethers.providers.Web3Provider(instance);
-    signer = provider.getSigner();
+    const provider = await window.web3Modal.openModal(); // Opens the modal
+    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    signer = ethersProvider.getSigner();
     userAddress = await signer.getAddress();
     utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
 
     document.getElementById("connectBtn").textContent = "Connected";
     generateReferralLink();
   } catch (err) {
-    console.error(err);
+    console.error("Connection error:", err);
     alert("Wallet connection failed");
   }
 }
