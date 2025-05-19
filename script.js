@@ -23,36 +23,44 @@ let usdtContract;
 // -------- Web3Modal Setup --------
 
 async function initWeb3Modal() {
-  const chains = [
-    {
-      chainId: 56,
-      name: 'Binance Smart Chain',
-      currency: 'BNB',
-      explorerUrl: 'https://bscscan.com',
-      rpcUrl: 'https://bsc-dataseed.binance.org/'
-    }
-  ];
+  const chains = [{
+    id: 56,
+    name: 'Binance Smart Chain',
+    rpcUrl: 'https://bsc-dataseed.binance.org/'
+  }];
 
   const metadata = {
     name: "BHIKX",
     description: "BHIKX Superhero Metaverse",
-    url: "https://your-dapp-url.com", // change to your actual domain
-    icons: ["https://your-dapp-url.com/logo.png"] // optional icon
+    url: "https://your-dapp-url.com", // Replace with your actual domain
+    icons: ["https://your-dapp-url.com/logo.png"] // Optional icon
   };
 
-  const ethereumClient = new window.EthereumClient({
-    chains,
-    projectId: "9bb77bfd32a850e43324d0b8c8ff41dc",
+  // Setup EthereumProvider for WalletConnect
+  const provider = await window.WalletConnectEthereumProvider.init({
+    projectId: "9bb77bfd32a850e43324d0b8c8ff41dc", // your project ID from WalletConnect
+    chains: [56],
+    showQrModal: true,
     metadata
   });
 
   window.web3Modal = new window.Web3Modal({
     projectId: "9bb77bfd32a850e43324d0b8c8ff41dc",
+    walletConnectVersion: 2,
     themeMode: "dark",
     themeVariables: {
       "--w3m-accent": "#f9a826"
-    }
-  }, ethereumClient);
+    },
+    standaloneChains: [56]
+  });
+
+  // Open modal
+  const openModal = document.getElementById('connectButton'); // replace with your button ID
+  if (openModal) {
+    openModal.addEventListener('click', async () => {
+      await window.web3Modal.openModal();
+    });
+  }
 }
 // -------- Wallet Connect --------
 async function connectWallet() {
