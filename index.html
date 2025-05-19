@@ -95,18 +95,14 @@
     </div>
     <p>&copy; 2025 BHIKX. All Rights Reserved.</p>
   </footer>
-<!-- Web3.js (optional if using ethers only) -->
-<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-
 <!-- Ethers.js -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
-<!-- WalletConnect Provider -->
-<script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
-
-<!-- Web3Modal -->
-<script src="https://unpkg.com/web3modal@1.9.10/dist/index.js"></script>
-
+<!-- Web3Modal v3 -->
+<script type="module">
+  import { EthereumClient, w3mConnectors, w3mProvider } from 'https://unpkg.com/@web3modal/ethereum@3.7.0/dist/index.js';
+  import { Web3Modal } from 'https://unpkg.com/@web3modal/html@3.7.0/dist/index.js';
+</script>
 </body>
 </html>
 
