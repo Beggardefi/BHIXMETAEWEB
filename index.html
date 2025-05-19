@@ -100,8 +100,11 @@
 
 <!-- Web3Modal v3 -->
 <script type="module">
-  import { EthereumClient, w3mConnectors, w3mProvider } from 'https://unpkg.com/@web3modal/ethereum@3.7.0/dist/index.js';
+  import { EthereumClient } from 'https://unpkg.com/@web3modal/ethereum@3.7.0/dist/index.js';
   import { Web3Modal } from 'https://unpkg.com/@web3modal/html@3.7.0/dist/index.js';
+
+  window.EthereumClient = EthereumClient;
+  window.Web3Modal = Web3Modal;
 </script>
 </body>
 </html>
