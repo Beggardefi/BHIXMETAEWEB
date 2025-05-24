@@ -1,3 +1,4 @@
+alert("JS Loaded!"); // Add at the top of script.js
 // -------- Global Setup --------
 let web3Modal;
 let provider;
