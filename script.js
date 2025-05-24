@@ -50,7 +50,7 @@ const modal = window.Web3ModalStandalone.init({
   },
   metadata
 });
-
+//connect wallet//
 async function connectWallet() {
   try {
     const ethereumProvider = await modal.connect();
@@ -69,15 +69,6 @@ async function connectWallet() {
   }
 }
 
-window.onload = () => {
-  // Optionally auto open modal
-  // modal.openModal();
-};
-window.onload = async () => {
-  if (modal.getState().selectedNetworkId) {
-    await connectWallet();
-  }
-};
 async function disconnectWallet() {
   if (modal) await modal.disconnect();
   userAddress = null;
@@ -145,7 +136,11 @@ function showSlide(index) {
 }
 
 // -------- DOM Ready --------
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+  if (modal.getState().selectedNetworkId) {
+    await connectWallet();
+  }
+});
   countdown = document.getElementById("countdown");
   if (countdown) {
     updateCountdown();
