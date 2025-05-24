@@ -37,7 +37,9 @@ async function initWeb3Modal() {
     theme: "dark"
   });
 }
-
+window.onload = async () => {
+  await initWeb3Modal();
+};
 // -------- Wallet Connect --------
 async function connectWallet() {
   try {
@@ -49,12 +51,11 @@ async function connectWallet() {
 
     document.getElementById("connectBtn").textContent = "Connected";
     generateReferralLink();
-  } catch (err) {
-    console.error(err);
-    alert("Wallet connection failed");
-  }
 }
-
+} catch (err) {
+  console.error("Wallet connect error:", err);
+  alert("Wallet connection failed: " + (err.message || "Unknown error"));
+}
 // -------- Referral Utilities --------
 function getReferralAddress() {
   const ref = new URLSearchParams(window.location.search).get("ref");
