@@ -51,10 +51,10 @@ async function connectWallet() {
 
     document.getElementById("connectBtn").textContent = "Connected";
     generateReferralLink();
-}
-} catch (err) {
-  console.error("Wallet connect error:", err);
-  alert("Wallet connection failed: " + (err.message || "Unknown error"));
+  } catch (err) {
+    console.error("Wallet connect error:", err);
+    alert("Wallet connection failed: " + (err.message || "Unknown error"));
+  }
 }
 // -------- Referral Utilities --------
 function getReferralAddress() {
