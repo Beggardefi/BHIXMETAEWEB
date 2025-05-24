@@ -38,7 +38,7 @@ const metadata = {
   name: "BHIKX",
   description: "BHIKX Superhero Metaverse DApp",
   url: "https://beggardefi.github.io/BHIXMETAEWEB/", // replace with your domain
-  icons: ["https://github.com/Beggardefi/BHIXMETAEWEB/blob/main/logo/logo.png"] // replace with your logo
+  icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png""] // replace with your logo
 };
 
 const modal = window.Web3ModalStandalone.init({
@@ -67,13 +67,19 @@ async function connectWallet() {
     console.error("Wallet connect error:", err);
   alert("Transaction failed: " + (err?.message || "Unknown error"));
 }
-
+}
+userAddress = await signer.getAddress();
+if (getReferralAddress().toLowerCase() === userAddress.toLowerCase()) {
+  alert("You can't refer yourself!");
+  return;
+}
 async function disconnectWallet() {
   if (modal) await modal.disconnect();
   userAddress = null;
   document.getElementById("connectBtn").textContent = "Connect Wallet";
   document.getElementById("referralLink").value = "";
 }
+
 // -------- Referral Utilities --------
 function getReferralAddress() {
   const ref = new URLSearchParams(window.location.search).get("ref");
@@ -92,11 +98,7 @@ function copyReferral() {
     .then(() => alert("Referral link copied!"))
     .catch(err => console.error("Failed to copy", err));
 }
-const ref = getReferralAddress();
-if (ref.toLowerCase() === userAddress.toLowerCase()) {
-  alert("You can't refer yourself!");
-  return;
-}
+
 // -------- Countdown --------
 let countdown;
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
