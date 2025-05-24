@@ -59,14 +59,20 @@ async function connectWallet() {
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
 
+    const ref = getReferralAddress();
+    if (ref.toLowerCase() === userAddress.toLowerCase()) {
+      alert("You can't refer yourself!");
+      return;
+    }
+
     utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
 
     document.getElementById("connectBtn").textContent = "Connected";
     generateReferralLink();
   } catch (err) {
     console.error("Wallet connect error:", err);
-  alert("Transaction failed: " + (err?.message || "Unknown error"));
-}
+    alert("Transaction failed: " + (err?.message || "Unknown error"));
+  }
 }
 userAddress = await signer.getAddress();
 if (getReferralAddress().toLowerCase() === userAddress.toLowerCase()) {
