@@ -35,11 +35,11 @@ const metadata = {
   icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png"]
 };
 
-const modal = window.Web3ModalStandalone.init({
+const modal = new window.Web3Modal({
   projectId,
-  chains,
+  walletConnectVersion: 2,
   themeMode: "dark",
-  themeVariables: { "--w3m-accent": "#ff9933" },
+  chains,
   metadata
 });
 
@@ -74,8 +74,11 @@ async function disconnectWallet() {
 
 // -------- Utilities --------
 function getReferralAddress() {
-  const ref = new URLSearchParams(window.location.search).get("ref");
-  return (ref && ethers.utils.isAddress(ref)) ? ref : (userAddress || ethers.constants.AddressZero);
+  const urlRef = new URLSearchParams(window.location.search).get("ref");
+  if (urlRef && ethers.utils.isAddress(urlRef) && urlRef.toLowerCase() !== userAddress?.toLowerCase()) {
+    return urlRef;
+  }
+  return ethers.constants.AddressZero;
 }
 
 function generateReferralLink() {
@@ -118,7 +121,7 @@ async function setupUSDT() {
 
 // -------- DOM Ready --------
 document.addEventListener("DOMContentLoaded", async () => {
-  countdown = document.getElementById("countdown");
+  const countdown = document.getElementById("countdown");
   if (countdown) {
     updateCountdown();
     setInterval(updateCountdown, 1000);
@@ -197,11 +200,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  document.getElementById("generateBotKey")?.addEventListener("click", () => {
-    if (!userAddress) return alert("Connect wallet first");
-    const key = btoa(userAddress + ":" + Date.now());
-    document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
-  });
+ document.getElementById("generateBotKey")?.addEventListener("click", async () => {
+  if (!userAddress) return alert("Connect wallet first");
+  const botKey = `BHIX-BOT-${userAddress.slice(2, 10).toUpperCase()}`;
+  document.getElementById("botKeyDisplay").innerText = `Your Bot Key: ${botKey}`;
+});
 
   document.getElementById("copyReferral")?.addEventListener("click", copyReferral);
 
@@ -229,9 +232,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Mobile menu
-  const hamburger = document.getElementById("hamburger");
-  const navMenu = document.getElementById("navMenu");
-  hamburger?.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
-  });
+  document.getElementById("hamburger")?.addEventListener("click", () => {
+  const nav = document.getElementById("navMenu");
+  nav.classList.toggle("active");
+});
 });
