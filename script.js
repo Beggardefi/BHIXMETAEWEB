@@ -51,8 +51,6 @@ const modal = window.Web3ModalStandalone.init({
   metadata
 });
 
-let provider, signer, userAddress, utilityContract;
-
 async function connectWallet() {
   try {
     const ethereumProvider = await modal.connect();
@@ -75,6 +73,17 @@ window.onload = () => {
   // Optionally auto open modal
   // modal.openModal();
 };
+window.onload = async () => {
+  if (modal.getState().selectedNetworkId) {
+    await connectWallet();
+  }
+};
+async function disconnectWallet() {
+  if (modal) await modal.disconnect();
+  userAddress = null;
+  document.getElementById("connectBtn").textContent = "Connect Wallet";
+  document.getElementById("referralLink").value = "";
+}
 // -------- Referral Utilities --------
 function getReferralAddress() {
   const ref = new URLSearchParams(window.location.search).get("ref");
@@ -137,7 +146,6 @@ function showSlide(index) {
 
 // -------- DOM Ready --------
 window.addEventListener("DOMContentLoaded", () => {
-  initWeb3Modal();
   countdown = document.getElementById("countdown");
   if (countdown) {
     updateCountdown();
