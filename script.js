@@ -21,40 +21,31 @@ const erc20Abi = [
 let usdtContract;
 
 // -------- Web3Modal Setup --------
-// Replace with your actual WalletConnect Project ID
 const projectId = "9bb77bfd32a850e43324d0b8c8ff41dc";
+const chains = [{
+  chainId: 56,
+  name: "Binance Smart Chain",
+  rpcUrl: "https://bsc-dataseed.binance.org/"
+}];
 
-// Supported chains
-const chains = [
-  {
-    chainId: 56,
-    name: "Binance Smart Chain",
-    rpcUrl: "https://bsc-dataseed.binance.org/"
-  }
-];
-
-// Create Web3Modal instance
 const metadata = {
   name: "BHIKX",
   description: "BHIKX Superhero Metaverse DApp",
-  url: "https://beggardefi.github.io/BHIXMETAEWEB/", // replace with your domain
-  icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png"] // replace with your logo
+  url: "https://beggardefi.github.io/BHIXMETAEWEB/",
+  icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png"]
 };
 
 const modal = window.Web3ModalStandalone.init({
   projectId,
   chains,
   themeMode: "dark",
-  themeVariables: {
-    "--w3m-accent": "#ff9933"
-  },
+  themeVariables: { "--w3m-accent": "#ff9933" },
   metadata
 });
-//connect wallet//
+
 async function connectWallet() {
   try {
     const ethereumProvider = await modal.connect();
-
     provider = new ethers.providers.Web3Provider(ethereumProvider);
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
@@ -66,12 +57,11 @@ async function connectWallet() {
     }
 
     utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
-
     document.getElementById("connectBtn").textContent = "Connected";
     generateReferralLink();
   } catch (err) {
     console.error("Wallet connect error:", err);
-    alert("Transaction failed: " + (err?.message || "Unknown error"));
+    alert("Connection failed: " + (err?.message || "Unknown error"));
   }
 }
 
@@ -82,11 +72,12 @@ async function disconnectWallet() {
   document.getElementById("referralLink").value = "";
 }
 
-// -------- Referral Utilities --------
+// -------- Utilities --------
 function getReferralAddress() {
   const ref = new URLSearchParams(window.location.search).get("ref");
   return (ref && ethers.utils.isAddress(ref)) ? ref : (userAddress || ethers.constants.AddressZero);
 }
+
 function generateReferralLink() {
   if (userAddress) {
     document.getElementById("referralLink").value = `${window.location.origin}?ref=${userAddress}`;
@@ -100,14 +91,13 @@ function copyReferral() {
     .catch(err => console.error("Failed to copy", err));
 }
 
-// -------- Countdown --------
-let countdown;
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
-
 function updateCountdown() {
   const now = new Date().getTime();
   const distance = endDate - now;
+  const countdown = document.getElementById("countdown");
 
+  if (!countdown) return;
   if (distance < 0) {
     countdown.innerHTML = "Presale Ended";
     return;
@@ -121,48 +111,28 @@ function updateCountdown() {
   countdown.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
 }
 
-// -------- USDT Setup --------
 async function setupUSDT() {
   usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
-  const decimals = await usdtContract.decimals();
-  return decimals;
-}
-
-// -------- Whitepaper Slides --------
-const whitepaperSlides = [
-  "BHIKX is a superhero-themed blockchain metaverse.",
-  "Earn by staking, referrals, and completing missions.",
-  "Use BHIXU tokens in-game and in the real world.",
-  "Join the DAO and shape the beggar-free future!"
-];
-let currentSlide = 0;
-
-function showSlide(index) {
-  document.getElementById("whitepaperSlide").innerText = whitepaperSlides[index];
+  return await usdtContract.decimals();
 }
 
 // -------- DOM Ready --------
-window.addEventListener("DOMContentLoaded", async () => {
-  if (modal.getState().selectedNetworkId) {
-    await connectWallet();
-  }
+document.addEventListener("DOMContentLoaded", async () => {
   countdown = document.getElementById("countdown");
   if (countdown) {
     updateCountdown();
     setInterval(updateCountdown, 1000);
   }
 
-  showSlide(currentSlide); // Show first whitepaper slide
-
-  document.getElementById("connectBtn").addEventListener("click", connectWallet);
-});
-  document.getElementById("buyBNB").addEventListener("click", async () => {
+  document.getElementById("connectBtn")?.addEventListener("click", connectWallet);
+  document.getElementById("buyBNB")?.addEventListener("click", async () => {
     const amount = document.getElementById("bnbAmount").value;
-    const buyBtn = document.getElementById("buyBNB");
-    if (!userAddress || !amount || isNaN(amount) || Number(amount) <= 0)
-  return alert("Enter a valid amount and connect wallet.");
+    if (!userAddress || !amount || isNaN(amount) || Number(amount) <= 0) {
+      return alert("Enter valid amount and connect wallet.");
+    }
+
     try {
-      buyBtn.disabled = true;
+      document.getElementById("buyBNB").disabled = true;
       const ref = getReferralAddress();
       const tx = await utilityContract.buyWithBNB(ref, {
         value: ethers.utils.parseEther(amount)
@@ -173,17 +143,16 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.error(err);
       alert("Transaction failed");
     } finally {
-      buyBtn.disabled = false;
+      document.getElementById("buyBNB").disabled = false;
     }
   });
 
-  document.getElementById("buyUSDT").addEventListener("click", async () => {
+  document.getElementById("buyUSDT")?.addEventListener("click", async () => {
     const amount = document.getElementById("usdtAmount").value;
-    const buyBtn = document.getElementById("buyUSDT");
     if (!userAddress || !amount) return alert("Connect wallet and enter amount");
 
     try {
-      buyBtn.disabled = true;
+      document.getElementById("buyUSDT").disabled = true;
       const ref = getReferralAddress();
       const decimals = await setupUSDT();
       const amountInWei = ethers.utils.parseUnits(amount, decimals);
@@ -198,11 +167,11 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.error(err);
       alert("Transaction failed");
     } finally {
-      buyBtn.disabled = false;
+      document.getElementById("buyUSDT").disabled = false;
     }
   });
 
-  document.getElementById("checkRewards").addEventListener("click", async () => {
+  document.getElementById("checkRewards")?.addEventListener("click", async () => {
     if (!userAddress) return alert("Connect wallet first");
 
     try {
@@ -215,7 +184,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  document.getElementById("redeemRewards").addEventListener("click", async () => {
+  document.getElementById("redeemRewards")?.addEventListener("click", async () => {
     if (!userAddress) return alert("Connect wallet first");
 
     try {
@@ -228,32 +197,41 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  document.getElementById("generateBotKey").addEventListener("click", () => {
+  document.getElementById("generateBotKey")?.addEventListener("click", () => {
     if (!userAddress) return alert("Connect wallet first");
     const key = btoa(userAddress + ":" + Date.now());
     document.getElementById("botKeyDisplay").innerText = "Your Bot Key: " + key;
   });
 
-  document.getElementById("prevSlide").addEventListener("click", () => {
+  document.getElementById("copyReferral")?.addEventListener("click", copyReferral);
+
+  // Whitepaper slides
+  const whitepaperSlides = [
+    "BHIKX is a superhero-themed blockchain metaverse.",
+    "Earn by staking, referrals, and completing missions.",
+    "Use BHIXU tokens in-game and in the real world.",
+    "Join the DAO and shape the beggar-free future!"
+  ];
+  let currentSlide = 0;
+
+  function showSlide(index) {
+    document.getElementById("whitepaperSlide").innerText = whitepaperSlides[index];
+  }
+
+  showSlide(currentSlide);
+  document.getElementById("prevSlide")?.addEventListener("click", () => {
     currentSlide = (currentSlide - 1 + whitepaperSlides.length) % whitepaperSlides.length;
     showSlide(currentSlide);
   });
-
-  document.getElementById("nextSlide").addEventListener("click", () => {
+  document.getElementById("nextSlide")?.addEventListener("click", () => {
     currentSlide = (currentSlide + 1) % whitepaperSlides.length;
     showSlide(currentSlide);
   });
 
-  const copyBtn = document.getElementById("copyReferral");
-  if (copyBtn) {
-    copyBtn.addEventListener("click", copyReferral);
-  }
-
+  // Mobile menu
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("navMenu");
-  if (hamburger && navMenu) {
-    hamburger.addEventListener("click", () => {
-      navMenu.classList.toggle("active");
-    });
-  }
+  hamburger?.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+  });
 });
