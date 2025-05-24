@@ -1,5 +1,4 @@
-alert("JS Loaded!"); // Add at the top of script.js
-// -------- Global Setup --------
+// ----------- Global Setup -----------
 let web3Modal;
 let provider;
 let signer;
@@ -21,13 +20,15 @@ const erc20Abi = [
 ];
 let usdtContract;
 
-// -------- Web3Modal Setup --------
+// ----------- Web3Modal V2 Setup (WalletConnect + Mobile Support) -----------
 const projectId = "9bb77bfd32a850e43324d0b8c8ff41dc";
-const chains = [{
-  chainId: 56,
-  name: "Binance Smart Chain",
-  rpcUrl: "https://bsc-dataseed.binance.org/"
-}];
+const chains = [
+  {
+    chainId: 56,
+    name: "Binance Smart Chain",
+    rpcUrl: "https://bsc-dataseed.binance.org/"
+  }
+];
 
 const metadata = {
   name: "BHIKX",
@@ -36,7 +37,7 @@ const metadata = {
   icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png"]
 };
 
-const modal = new window.Web3Modal({
+web3Modal = new window.Web3Modal({
   projectId,
   walletConnectVersion: 2,
   themeMode: "dark",
@@ -44,42 +45,13 @@ const modal = new window.Web3Modal({
   metadata
 });
 
-async function connectWallet() {
-  try {
-    const ethereumProvider = await modal.connect();
-    provider = new ethers.providers.Web3Provider(ethereumProvider);
-    signer = provider.getSigner();
-    userAddress = await signer.getAddress();
-
-    const ref = getReferralAddress();
-    if (ref.toLowerCase() === userAddress.toLowerCase()) {
-      alert("You can't refer yourself!");
-      return;
-    }
-
-    utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
-    document.getElementById("connectBtn").textContent = "Connected";
-    generateReferralLink();
-  } catch (err) {
-    console.error("Wallet connect error:", err);
-    alert("Connection failed: " + (err?.message || "Unknown error"));
-  }
-}
-
-async function disconnectWallet() {
-  if (modal) await modal.disconnect();
-  userAddress = null;
-  document.getElementById("connectBtn").textContent = "Connect Wallet";
-  document.getElementById("referralLink").value = "";
-}
-
-// -------- Utilities --------
+// ----------- Utility Functions -----------
 function getReferralAddress() {
   const urlRef = new URLSearchParams(window.location.search).get("ref");
-  if (urlRef && ethers.utils.isAddress(urlRef) && urlRef.toLowerCase() !== userAddress?.toLowerCase()) {
+  if (urlRef && window.ethers.utils.isAddress(urlRef) && urlRef.toLowerCase() !== userAddress?.toLowerCase()) {
     return urlRef;
   }
-  return ethers.constants.AddressZero;
+  return window.ethers.constants.AddressZero;
 }
 
 function generateReferralLink() {
@@ -90,7 +62,7 @@ function generateReferralLink() {
 
 function copyReferral() {
   const input = document.getElementById("referralLink");
-  navigator.clipboard.writeText(input.value)
+  window.navigator.clipboard.writeText(input.value)
     .then(() => alert("Referral link copied!"))
     .catch(err => console.error("Failed to copy", err));
 }
@@ -116,30 +88,56 @@ function updateCountdown() {
 }
 
 async function setupUSDT() {
-  usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+  usdtContract = new window.ethers.Contract(usdtAddress, erc20Abi, signer);
   return await usdtContract.decimals();
 }
 
-// -------- DOM Ready --------
-document.addEventListener("DOMContentLoaded", async () => {
-  const countdown = document.getElementById("countdown");
-  if (countdown) {
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  }
+// ----------- Wallet Connect/Disconnect -----------
+async function connectWallet() {
+  try {
+    const ethereumProvider = await web3Modal.connect();
+    provider = new window.ethers.providers.Web3Provider(ethereumProvider);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
 
+    const ref = getReferralAddress();
+    if (ref.toLowerCase() === userAddress.toLowerCase()) {
+      alert("You can't refer yourself!");
+      return;
+    }
+
+    utilityContract = new window.ethers.Contract(utilityAddress, utilityAbi, signer);
+    document.getElementById("connectBtn").textContent = "Connected";
+    generateReferralLink();
+  } catch (err) {
+    console.error("Wallet connect error:", err);
+    alert("Connection failed: " + (err?.message || "Unknown error"));
+  }
+}
+
+async function disconnectWallet() {
+  if (web3Modal) await web3Modal.disconnect();
+  userAddress = null;
+  document.getElementById("connectBtn").textContent = "Connect Wallet";
+  document.getElementById("referralLink").value = "";
+}
+
+// ----------- DOM & UI Event Bindings -----------
+function bindEvents() {
+  // Wallet Connect Button
   document.getElementById("connectBtn")?.addEventListener("click", connectWallet);
+  
+  // Buy with BNB
   document.getElementById("buyBNB")?.addEventListener("click", async () => {
     const amount = document.getElementById("bnbAmount").value;
     if (!userAddress || !amount || isNaN(amount) || Number(amount) <= 0) {
       return alert("Enter valid amount and connect wallet.");
     }
-
     try {
       document.getElementById("buyBNB").disabled = true;
       const ref = getReferralAddress();
       const tx = await utilityContract.buyWithBNB(ref, {
-        value: ethers.utils.parseEther(amount)
+        value: window.ethers.utils.parseEther(amount)
       });
       await tx.wait();
       alert("BHIXU purchased with BNB!");
@@ -151,15 +149,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  // Buy with USDT
   document.getElementById("buyUSDT")?.addEventListener("click", async () => {
     const amount = document.getElementById("usdtAmount").value;
     if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-
     try {
       document.getElementById("buyUSDT").disabled = true;
       const ref = getReferralAddress();
       const decimals = await setupUSDT();
-      const amountInWei = ethers.utils.parseUnits(amount, decimals);
+      const amountInWei = window.ethers.utils.parseUnits(amount, decimals);
 
       const approval = await usdtContract.approve(utilityAddress, amountInWei);
       await approval.wait();
@@ -175,12 +173,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  // Referral Link Copy
+  document.getElementById("copyReferral")?.addEventListener("click", copyReferral);
+
+  // Check Rewards
   document.getElementById("checkRewards")?.addEventListener("click", async () => {
     if (!userAddress) return alert("Connect wallet first");
-
     try {
       const rewards = await utilityContract.getReferralRewards(userAddress);
-      const formatted = ethers.utils.formatUnits(rewards, 18);
+      const formatted = window.ethers.utils.formatUnits(rewards, 18);
       document.getElementById("rewardResult").innerText = `You have ${formatted} BHIXU in rewards.`;
     } catch (err) {
       console.error(err);
@@ -188,9 +189,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  // Redeem Rewards
   document.getElementById("redeemRewards")?.addEventListener("click", async () => {
     if (!userAddress) return alert("Connect wallet first");
-
     try {
       const tx = await utilityContract.redeemRewards();
       await tx.wait();
@@ -201,15 +202,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
- document.getElementById("generateBotKey")?.addEventListener("click", async () => {
-  if (!userAddress) return alert("Connect wallet first");
-  const botKey = `BHIX-BOT-${userAddress.slice(2, 10).toUpperCase()}`;
-  document.getElementById("botKeyDisplay").innerText = `Your Bot Key: ${botKey}`;
-});
+  // Bot Key Generation
+  document.getElementById("generateBotKey")?.addEventListener("click", async () => {
+    if (!userAddress) return alert("Connect wallet first");
+    const botKey = `BHIX-BOT-${userAddress.slice(2, 10).toUpperCase()}`;
+    document.getElementById("botKeyDisplay").innerText = `Your Bot Key: ${botKey}`;
+  });
 
-  document.getElementById("copyReferral")?.addEventListener("click", copyReferral);
-
-  // Whitepaper slides
+  // Whitepaper Slider
   const whitepaperSlides = [
     "BHIKX is a superhero-themed blockchain metaverse.",
     "Earn by staking, referrals, and completing missions.",
@@ -232,9 +232,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     showSlide(currentSlide);
   });
 
-  // Mobile menu
+  // Hamburger Menu (Mobile Nav)
   document.getElementById("hamburger")?.addEventListener("click", () => {
-  const nav = document.getElementById("navMenu");
-  nav.classList.toggle("active");
-});
-});
+    const nav = document.getElementById("navMenu");
+    nav.classList.toggle("active");
+  });
+}
+
+// ----------- App Initialization -----------
+function appInit() {
+  // Countdown Timer
+  const countdown = document.getElementById("countdown");
+  if (countdown) {
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+  bindEvents();
+}
+
+// ----------- Start App (No DOMContentLoaded Needed With defer) -----------
+appInit();
