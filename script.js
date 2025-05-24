@@ -38,7 +38,7 @@ const metadata = {
   name: "BHIKX",
   description: "BHIKX Superhero Metaverse DApp",
   url: "https://beggardefi.github.io/BHIXMETAEWEB/", // replace with your domain
-  icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png""] // replace with your logo
+  icons: ["https://raw.githubusercontent.com/Beggardefi/BHIXMETAEWEB/main/logo/logo.png"] // replace with your logo
 };
 
 const modal = window.Web3ModalStandalone.init({
@@ -74,11 +74,7 @@ async function connectWallet() {
     alert("Transaction failed: " + (err?.message || "Unknown error"));
   }
 }
-userAddress = await signer.getAddress();
-if (getReferralAddress().toLowerCase() === userAddress.toLowerCase()) {
-  alert("You can't refer yourself!");
-  return;
-}
+
 async function disconnectWallet() {
   if (modal) await modal.disconnect();
   userAddress = null;
@@ -89,9 +85,8 @@ async function disconnectWallet() {
 // -------- Referral Utilities --------
 function getReferralAddress() {
   const ref = new URLSearchParams(window.location.search).get("ref");
-  return ref && ethers.utils.isAddress(ref) ? ref : userAddress;
+  return (ref && ethers.utils.isAddress(ref)) ? ref : (userAddress || ethers.constants.AddressZero);
 }
-
 function generateReferralLink() {
   if (userAddress) {
     document.getElementById("referralLink").value = `${window.location.origin}?ref=${userAddress}`;
