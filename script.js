@@ -38,7 +38,7 @@ const metadata = {
   name: "BHIKX",
   description: "BHIKX Superhero Metaverse DApp",
   url: "https://beggardefi.github.io/BHIXMETAEWEB/", // replace with your domain
-  icons: ["https://yourwebsite.com/icon.png"] // replace with your logo
+  icons: ["https://github.com/Beggardefi/BHIXMETAEWEB/blob/main/logo/logo.png"] // replace with your logo
 };
 
 const modal = window.Web3ModalStandalone.init({
