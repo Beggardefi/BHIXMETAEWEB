@@ -1,3 +1,7 @@
+alert("JS Loaded!");
+document.getElementById("connectBtn")?.addEventListener("click", function() {
+  alert("Button Clicked!");
+});
 // ----------- Global Setup -----------
 let web3Modal;
 let provider;
