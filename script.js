@@ -21,32 +21,46 @@ const erc20Abi = [
 let usdtContract;
 
 // -------- Web3Modal Setup --------
-async function initWeb3Modal() {
-  const providerOptions = {
-    walletconnect: {
-      package: window.WalletConnectProvider.default,
-      options: {
-        rpc: { 56: "https://bsc-dataseed.binance.org/" }
-      }
-    }
-  };
+// Replace with your actual WalletConnect Project ID
+const projectId = "9bb77bfd32a850e43324d0b8c8ff41dc";
 
-  web3Modal = new window.Web3Modal.default({
-    cacheProvider: true,
-    providerOptions,
-    theme: "dark"
-  });
-}
-window.onload = async () => {
-  await initWeb3Modal();
+// Supported chains
+const chains = [
+  {
+    chainId: 56,
+    name: "Binance Smart Chain",
+    rpcUrl: "https://bsc-dataseed.binance.org/"
+  }
+];
+
+// Create Web3Modal instance
+const metadata = {
+  name: "BHIKX",
+  description: "BHIKX Superhero Metaverse DApp",
+  url: "https://beggardefi.github.io/BHIXMETAEWEB/", // replace with your domain
+  icons: ["https://yourwebsite.com/icon.png"] // replace with your logo
 };
-// -------- Wallet Connect --------
+
+const modal = window.Web3ModalStandalone.init({
+  projectId,
+  chains,
+  themeMode: "dark",
+  themeVariables: {
+    "--w3m-accent": "#ff9933"
+  },
+  metadata
+});
+
+let provider, signer, userAddress, utilityContract;
+
 async function connectWallet() {
   try {
-    const instance = await web3Modal.connect();
-    provider = new ethers.providers.Web3Provider(instance);
+    const ethereumProvider = await modal.connect();
+
+    provider = new ethers.providers.Web3Provider(ethereumProvider);
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
+
     utilityContract = new ethers.Contract(utilityAddress, utilityAbi, signer);
 
     document.getElementById("connectBtn").textContent = "Connected";
@@ -56,6 +70,11 @@ async function connectWallet() {
     alert("Wallet connection failed: " + (err.message || "Unknown error"));
   }
 }
+
+window.onload = () => {
+  // Optionally auto open modal
+  // modal.openModal();
+};
 // -------- Referral Utilities --------
 function getReferralAddress() {
   const ref = new URLSearchParams(window.location.search).get("ref");
