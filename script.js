@@ -65,8 +65,7 @@ async function connectWallet() {
     generateReferralLink();
   } catch (err) {
     console.error("Wallet connect error:", err);
-    alert("Wallet connection failed: " + (err.message || "Unknown error"));
-  }
+  alert("Transaction failed: " + (err?.message || "Unknown error"));
 }
 
 async function disconnectWallet() {
@@ -93,7 +92,11 @@ function copyReferral() {
     .then(() => alert("Referral link copied!"))
     .catch(err => console.error("Failed to copy", err));
 }
-
+const ref = getReferralAddress();
+if (ref.toLowerCase() === userAddress.toLowerCase()) {
+  alert("You can't refer yourself!");
+  return;
+}
 // -------- Countdown --------
 let countdown;
 const endDate = new Date("2025-07-31T23:59:59Z").getTime();
@@ -117,8 +120,8 @@ function updateCountdown() {
 
 // -------- USDT Setup --------
 async function setupUSDT() {
-  const decimals = await new ethers.Contract(usdtAddress, erc20Abi, provider).decimals();
   usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+  const decimals = await usdtContract.decimals();
   return decimals;
 }
 
@@ -140,7 +143,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   if (modal.getState().selectedNetworkId) {
     await connectWallet();
   }
-});
   countdown = document.getElementById("countdown");
   if (countdown) {
     updateCountdown();
@@ -150,12 +152,12 @@ window.addEventListener("DOMContentLoaded", async () => {
   showSlide(currentSlide); // Show first whitepaper slide
 
   document.getElementById("connectBtn").addEventListener("click", connectWallet);
-
+});
   document.getElementById("buyBNB").addEventListener("click", async () => {
     const amount = document.getElementById("bnbAmount").value;
     const buyBtn = document.getElementById("buyBNB");
-    if (!userAddress || !amount) return alert("Connect wallet and enter amount");
-
+    if (!userAddress || !amount || isNaN(amount) || Number(amount) <= 0)
+  return alert("Enter a valid amount and connect wallet.");
     try {
       buyBtn.disabled = true;
       const ref = getReferralAddress();
