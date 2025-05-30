@@ -15,11 +15,19 @@
     h1, h2 {
       color: #00e0ff;
     }
-    .provider-section {
-      margin-bottom: 3rem;
+    .category-section {
+      margin-bottom: 4rem;
+    }
+    .category-title {
+      font-size: 1.6rem;
+      color: #ff9f1c;
+      margin-top: 2rem;
+    }
+    .subcategory {
       background: #111827;
       padding: 1.5rem;
       border-radius: 12px;
+      margin: 1rem 0;
       box-shadow: 0 0 10px rgba(0, 224, 255, 0.1);
     }
     .role-title {
@@ -48,41 +56,63 @@
 </head>
 <body>
   <h1>BHIKX Service Providers & Roles</h1>
-  <p>Below is a list of all service providers required in the BHIKX ecosystem. You may apply for a role after staking the required amount of BHIX tokens. Access is granted based on your membership tier.</p>  <div id="provider-list"></div>  <script>
-    const providers = [
-      { role: "Labour / Helpers", metaverse: "Build cities, roads, buildings", realworld: "Manual labor, packaging", tier: "Tier 1+" },
-      { role: "Delivery Agents", metaverse: "Transport items/resources", realworld: "Parcel/Food delivery", tier: "Tier 1+" },
-      { role: "Doctors", metaverse: "Virtual clinics, NFT health avatars", realworld: "Health checkups, telemedicine", tier: "Tier 5+" },
-      { role: "Tailors / Designers", metaverse: "Superhero outfits, avatar skins", realworld: "Stitching, dress design", tier: "Tier 3+" },
-      { role: "Electricians / Plumbers", metaverse: "Maintain metaverse infrastructure", realworld: "Home/office repair services", tier: "Tier 2+" },
-      { role: "House Cleaners", metaverse: "Clean virtual homes", realworld: "Domestic cleaning", tier: "Tier 1+" },
-      { role: "Teachers / Trainers", metaverse: "Run skill academies", realworld: "Skill/vocational training", tier: "Tier 4+" },
-      { role: "Storekeepers / Managers", metaverse: "Manage virtual stores", realworld: "Operate BHIKX outlets", tier: "Tier 3+ (Manager: Tier 5+)" },
-      { role: "Developers", metaverse: "Build apps, secure systems", realworld: "Web3, bots, fullstack dev", tier: "Tier 4–7" },
-      { role: "Artists / Designers", metaverse: "Create NFTs, art assets", realworld: "Branding, UI/UX, 3D", tier: "Tier 3+" },
-      { role: "Warehouse Managers", metaverse: "Inventory control", realworld: "Stock, shipping, supply", tier: "Tier 4+" },
-      { role: "Chefs / Food Providers", metaverse: "NFT food power-ups", realworld: "Cloud kitchens, food stalls", tier: "Tier 2+" },
-      { role: "Business Consultants", metaverse: "Guide users in sim zones", realworld: "Business coaching", tier: "Tier 6+" },
-      { role: "Content Creators", metaverse: "Events, livestreams", realworld: "Promotion, video content", tier: "Tier 2+" },
-      { role: "Legal / Financial Advisors", metaverse: "DAO advice, tax help", realworld: "Legal & compliance", tier: "Tier 5+" },
-      { role: "Therapists / Coaches", metaverse: "Meditation pods, healing", realworld: "Mental health support", tier: "Tier 4+" },
-      { role: "Security Professionals", metaverse: "Anti-cheat patrols", realworld: "Physical security", tier: "Tier 2+" },
-      { role: "Architects / Engineers", metaverse: "Design metaverse zones", realworld: "Build franchise outlets", tier: "Tier 6+" },
-      { role: "Veterinary / Animal Care", metaverse: "NFT pet hospitals", realworld: "Pet grooming, care", tier: "Tier 3+" },
-      { role: "Agricultural Experts", metaverse: "Farming simulations", realworld: "Smart agriculture", tier: "Tier 3+" },
-    ];
+  <p>Explore a categorized list of all service providers required in the BHIKX ecosystem. You can apply after staking the required amount of BHIX tokens as per your membership tier.</p>  <div id="provider-list"></div>  <script>
+    const categorizedProviders = {
+      "Logistics & Delivery": [
+        { role: "Labour / Helpers", metaverse: "Build cities, roads, buildings", realworld: "Manual labor, packaging", tier: "Tier 1+" },
+        { role: "Delivery Agents", metaverse: "Transport items/resources", realworld: "Parcel/Food delivery", tier: "Tier 1+" }
+      ],
+      "Healthcare & Wellness": [
+        { role: "Doctors", metaverse: "Virtual clinics, NFT health avatars", realworld: "Health checkups, telemedicine", tier: "Tier 5+" },
+        { role: "Therapists / Coaches", metaverse: "Meditation pods, healing", realworld: "Mental health support", tier: "Tier 4+" },
+        { role: "Veterinary / Animal Care", metaverse: "NFT pet hospitals", realworld: "Pet grooming, care", tier: "Tier 3+" }
+      ],
+      "Home & Utility Services": [
+        { role: "Tailors / Designers", metaverse: "Superhero outfits, avatar skins", realworld: "Stitching, dress design", tier: "Tier 3+" },
+        { role: "Electricians / Plumbers", metaverse: "Maintain metaverse infrastructure", realworld: "Home/office repair services", tier: "Tier 2+" },
+        { role: "House Cleaners", metaverse: "Clean virtual homes", realworld: "Domestic cleaning", tier: "Tier 1+" }
+      ],
+      "Education & Training": [
+        { role: "Teachers / Trainers", metaverse: "Run skill academies", realworld: "Skill/vocational training", tier: "Tier 4+" }
+      ],
+      "Retail & Food Services": [
+        { role: "Storekeepers / Managers", metaverse: "Manage virtual stores", realworld: "Operate BHIKX outlets", tier: "Tier 3+ (Manager: Tier 5+)" },
+        { role: "Chefs / Food Providers", metaverse: "NFT food power-ups", realworld: "Cloud kitchens, food stalls", tier: "Tier 2+" }
+      ],
+      "Technology & Innovation": [
+        { role: "Developers", metaverse: "Build apps, secure systems", realworld: "Web3, bots, fullstack dev", tier: "Tier 4–7" },
+        { role: "Artists / Designers", metaverse: "Create NFTs, art assets", realworld: "Branding, UI/UX, 3D", tier: "Tier 3+" },
+        { role: "Content Creators", metaverse: "Events, livestreams", realworld: "Promotion, video content", tier: "Tier 2+" }
+      ],
+      "Consultancy & Legal": [
+        { role: "Business Consultants", metaverse: "Guide users in sim zones", realworld: "Business coaching", tier: "Tier 6+" },
+        { role: "Legal / Financial Advisors", metaverse: "DAO advice, tax help", realworld: "Legal & compliance", tier: "Tier 5+" }
+      ],
+      "Security & Operations": [
+        { role: "Security Professionals", metaverse: "Anti-cheat patrols", realworld: "Physical security", tier: "Tier 2+" },
+        { role: "Warehouse Managers", metaverse: "Inventory control", realworld: "Stock, shipping, supply", tier: "Tier 4+" }
+      ],
+      "Infrastructure & Development": [
+        { role: "Architects / Engineers", metaverse: "Design metaverse zones", realworld: "Build franchise outlets", tier: "Tier 6+" },
+        { role: "Agricultural Experts", metaverse: "Farming simulations", realworld: "Smart agriculture", tier: "Tier 3+" }
+      ]
+    };
 
     const container = document.getElementById("provider-list");
-    providers.forEach(({ role, metaverse, realworld, tier }) => {
-      container.innerHTML += `
-        <div class="provider-section">
-          <div class="role-title">${role}</div>
-          <div class="role-detail"><strong>Metaverse Role:</strong> ${metaverse}</div>
-          <div class="role-detail"><strong>Real-World Role:</strong> ${realworld}</div>
-          <div class="eligibility"><strong>Eligibility:</strong> ${tier}</div>
-          <button class="apply-button" onclick="alert('Please connect wallet and stake required BHIX to apply.')">Apply</button>
-        </div>
-      `;
-    });
+    for (const [category, roles] of Object.entries(categorizedProviders)) {
+      container.innerHTML += `<div class="category-section"><div class="category-title">${category}</div>`;
+      roles.forEach(({ role, metaverse, realworld, tier }) => {
+        container.innerHTML += `
+          <div class="subcategory">
+            <div class="role-title">${role}</div>
+            <div class="role-detail"><strong>Metaverse Role:</strong> ${metaverse}</div>
+            <div class="role-detail"><strong>Real-World Role:</strong> ${realworld}</div>
+            <div class="eligibility"><strong>Eligibility:</strong> ${tier}</div>
+            <button class="apply-button" onclick="alert('Please connect wallet and stake required BHIX to apply.')">Apply</button>
+          </div>
+        `;
+      });
+      container.innerHTML += `</div>`;
+    }
   </script></body>
 </html>
