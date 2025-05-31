@@ -47,36 +47,34 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Wallet Connect ---
+// --- Wallet Connect (Web3Modal v2) ---
 let provider;
 let signer;
 let currentAccount = "";
-const usdtAddress = "0x14f3d88351B5c67801895E667b51a2b8E412A26F";
-const presaleAddress = "0x14f3d88351B5c67801895E667b51a2b8E412A26F";
+
+const web3Modal = new window.Web3Modal.default({
+  projectId: "YOUR_PROJECT_ID", // Replace with your WalletConnect Project ID
+  walletConnectVersion: 2,
+  themeMode: "light",
+  themeColor: "blue",
+  chains: [{ id: 56, name: "Binance Smart Chain", rpcUrl: "https://bsc-dataseed.binance.org/" }]
+});
 
 async function connectWallet() {
   try {
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-    } else {
-      const walletConnectProvider = new WalletConnectProvider.default({
-        rpc: { 56: "https://bsc-dataseed.binance.org/" },
-        chainId: 56
-      });
-      await walletConnectProvider.enable();
-      provider = new ethers.providers.Web3Provider(walletConnectProvider);
-    }
-
+    const instance = await web3Modal.connect();
+    provider = new ethers.providers.Web3Provider(instance);
     signer = provider.getSigner();
     currentAccount = await signer.getAddress();
+
     document.getElementById("walletBalance").innerText = currentAccount;
     initializeBotAccess();
   } catch (error) {
     console.error("Wallet connection failed", error);
+    alert("Failed to connect wallet.");
   }
 }
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
-
 // --- Buy with BNB ---
 async function buyWithBNB() {
   const amountBNB = prompt("Enter amount in BNB:");
@@ -170,3 +168,9 @@ async function initializeBotAccess() {
     botUI.style.display = "none";
   }
 }
+//--navbar logic auto hide--//
+document.querySelectorAll("#mainMenu a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.getElementById("mainMenu").classList.remove("active");
+  });
+});
