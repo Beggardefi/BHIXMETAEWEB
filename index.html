@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@walletconnect/web3modal"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
 </head>
 
 <body>
@@ -21,7 +23,9 @@
     <nav>
       <div class="logo">BHIKX</div>
       <div class="menu-toggle"><i class="fas fa-bars"></i></div>
-      <div class="navbar-menu" id="mainMenu">
+      <nav id="mainMenu" class="main-menu scrollable-menu">
+  <!-- all nav items -->
+      </nav>
         <a href="#home"><i class="fas fa-home"></i> Home</a>
         <a href="#presale"><i class="fas fa-coins"></i> Presale</a>
         <a href="#staking"><i class="fas fa-lock"></i> Staking</a>
