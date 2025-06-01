@@ -4,12 +4,10 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BHIKX - Superhero Metaverse Presale</title>
+  <title>BHIX - Superheroes Metaverse Presale</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@walletconnect/web3modal"></script>
-<script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
 </head>
 
 <body>
@@ -21,10 +19,10 @@
   <!-- Navigation -->
   <header>
     <nav>
-  <div class="logo">BHIKX</div>
-  <div class="menu-toggle"><i class="fas fa-bars"></i></div>
-  <div id="mainMenu" class="scrollable-menu">
-    <a href="#home"><i class="fas fa-home"></i> Home</a>
+      <div class="logo">BHIKX</div>
+      <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+      <div class="navbar-menu" id="mainMenu">
+           <a href="#home"><i class="fas fa-home"></i> Home</a>
     <a href="#presale"><i class="fas fa-coins"></i> Presale</a>
     <a href="#staking"><i class="fas fa-lock"></i> Staking</a>
     <a href="#whitepaper"><i class="fas fa-file-alt"></i> Whitepaper</a>
@@ -55,6 +53,7 @@
       
         <a href="WYSJU/index.html" class="alt-btn">Why You Should Join Us</a>
       </div>
+    </div>
     <div class="hero-image">
       <img src="images/bhikux-hero.jpg" alt="Bhikux Superhero" id="bhikuxHero" />
     </div>
@@ -73,16 +72,17 @@
     <p>1 USDT = 100 BHIKX</p>
     <div class="buy-buttons">
       <button id="buyBNB">Buy with BNB</button>
+      <button id="buyUSDT">Buy with USDT</button>
       <button id="connectWallet">Connect Wallet</button>
     </div>
     <p>Wallet Balance: <span id="walletBalance">--</span></p>
     <div class="progress-bar">
       <div id="presale-progress" class="progress"></div>
     </div>
-    <p id="progress-text">Raised: $,000 / Target: $1500,000</p>
+    <p id="progress-text">Raised: $25,000 / Target: $300,000</p>
   </div>
 </section>
-        
+       
     <!-- intro video -->
     <section class="mt-12 text-center" data-aos="fade-up">
   <h2 class="text-3xl font-bold text-white mb-4">Discover the Vision</h2>
@@ -159,16 +159,16 @@
           <source src="videos/metaverse-business.mp4" type="video/mp4">
         </video>
       </div>
-    </div>
 
     <button class="arrow left" onclick="prevSlide()">&#9664;</button>
     <button class="arrow right" onclick="nextSlide()">&#9654;</button>
   </div>
   <a href="whitepaper/BHIKX_Whitepaper.pdf" download class="btn-hero" style="--from-color: #00CED1; --to-color: #1E90FF;">
   Download Whitepaper
-</a>    
+</a>
 </section>
-      <!-- roadmap -->
+
+    <!-- roadmap -->
     <section id="roadmap" class="section with-bg roadmap-section">
   <div class="container">
     <h2 class="section-title">Our Roadmap</h2>
@@ -258,11 +258,9 @@
       <div class="tokenomics-row">
         <div>Reserve / Emergency Fund</div>
         <div>2% (200M)</div>
-        <div>DAO-governed, emergency or strategic needs</div>
-        
+        <div>DAO-governed, emergency or strategic needs</div>  
       </div>
-    </div>
-  </div>
+  
   <div class="tokenomics-image-container">
   <img src="images/tokenomics.png" alt="Tokenomics Chart" class="tokenomics-image" />
 </div>
@@ -290,9 +288,17 @@
   <button id="redeemBtn" onclick="redeemRewards()" class="btn-primary">Redeem Rewards</button>
 </div>
 
-
-    <!-- BOT LAUNCH-->
+<style>
+  .btn-stake {
+    @apply bg-green-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-500 shadow hover:scale-105 transition;
+  }
+  .btn-redeem {
+    @apply bg-indigo-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-indigo-500 shadow hover:scale-105 transition;
+  }
+</style>
     </section>
+    <!-- BOT LAUNCH-->
+    
     <section id="bot-launch" class="golden-panel">
   <h2>Trading Bot Access</h2>
   <div id="bot-access-message" class="bot-status">
@@ -384,5 +390,5 @@
   <div class="absolute w-60 h-60 bg-gradient-to-br from-yellow-400 to-red-600 opacity-20 rounded-full animate-ping top-32 right-10 blur-2xl"></div>
 </div>
 </body>
-          </html>
-  
+    </html>
+    
