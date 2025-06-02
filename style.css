@@ -536,6 +536,27 @@ form button:hover {
 
 /* Show on mobile */
 @media (max-width: 768px) {
+  .navbar-menu {
+    display: flex;
+    flex-direction: column;
+    max-height: 75vh;
+    overflow-y: auto;
+    width: 100vw;
+    right: 0;
+    left: 0;
+    position: fixed;
+    top: 60px;
+    z-index: 9999;
+    background: #111;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    transition: max-height 0.4s cubic-bezier(.4,2,.6,1);
+  }
+  .navbar-menu:not(.active) {
+    max-height: 0;
+    overflow: hidden;
+  }
+}
   .menu-toggle {
     display: flex;
   }
