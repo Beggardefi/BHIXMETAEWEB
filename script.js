@@ -59,7 +59,7 @@ async function connectWallet() {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
     } else {
-      const walletConnectProvider = new WalletConnectProvider.default({
+      const walletConnectProvider = new WalletConnectProvider({
         rpc: { 56: "https://bsc-dataseed.binance.org/" },
         chainId: 56
       });
