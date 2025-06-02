@@ -168,26 +168,59 @@ nav {
 }
 .alt-btn:hover { background: var(--gold); color: #000; }
 .hero-image {
-  flex: 1 1 250px;
+  flex: 1;
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  min-width: 220px;
 }
+
 .hero-image img {
-  width: 290px; max-width: 90vw; min-width: 140px;
-  border-radius: 22px;
-  box-shadow: 0 4px 40px var(--red);
-  background: #222;
+  width: 300px;         /* Increase or decrease as needed */
+  max-width: 100%;
+  height: 40%;
+  position: absolute;
+  right: 30px;          /* Positioning to the right */
+  bottom: 150px;
+  z-index: 0;
+  animation: floatBhikux 6s ease-in-out infinite;
 }
+
+@keyframes floatBhikux {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 .presale-status-banner {
   margin-top: 2rem;
-  margin-bottom: 1rem;
-  text-align: left;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #FFD700, #FF4500);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+  display: inline-block;
+  animation: pulseGlow 2s infinite;
+  text-align: center;
 }
-.presale-ended { color: var(--gold); font-weight: bold; margin-right: 1.5rem; }
-#countdown { color: #fff; font-weight: bold; }
 
+.presale-ended {
+  color: #000;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 69, 0, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+  }
+}
 @media (max-width: 900px) {
   .hero-wrapper { flex-direction: column; align-items: flex-start; }
   .hero-image { justify-content: center; }
@@ -195,39 +228,104 @@ nav {
 
 /* === How-to-buy Section === */
 .how-to-buy-section {
-  background: var(--panel-bg);
-  border-radius: 16px;
-  margin: 2.5rem auto;
-  max-width: 1100px;
-  box-shadow: 0 2px 40px rgba(255,215,0,0.04);
-  padding: 2.5rem 1.5rem 2rem 1.5rem;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
-  gap: 2.5rem;
-}
-.buy-text, .buy-image { flex: 1 1 290px; }
-.buy-text h2 { color: var(--gold); font-size: 2rem; margin-bottom: 1rem; }
-.buy-text ul { margin: 1.2rem 0 1.4rem 1rem; }
-.buy-text li { font-size: 1.09rem; margin-bottom: 0.5rem; color: #fff; list-style: disc; }
-.buy-now-btn {
-  display: inline-block;
-  background: linear-gradient(90deg, var(--red), var(--gold));
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  padding: 0.8rem 2rem;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 12px rgba(255,215,0,0.09);
-  transition: transform 0.18s;
-  margin-top: 1rem;
-}
-.buy-now-btn:hover { transform: scale(1.05); background: linear-gradient(90deg, var(--gold), var(--red)); }
-.buy-image img {
-  width: 100%; max-width: 340px; border-radius: 16px; box-shadow: 0 2px 14px var(--gold);
+  background: linear-gradient(90deg, #000, #111);
+  padding: 80px 40px;
+  color: gold;
+  position: relative;
+  overflow: hidden;
+  border-top: 2px solid gold;
+  border-bottom: 2px solid gold;
 }
 
+.buy-text {
+  flex: 1;
+  max-width: 60%;
+  animation: fadeInLeft 1.5s ease-in-out;
+  z-index: 2;
+}
+
+.buy-text h2 {
+  font-size: 40px;
+  margin-bottom: 20px;
+  color: #ffd700;
+}
+
+.buy-text p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.buy-steps {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 30px;
+}
+.buy-steps li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #eee;
+}
+
+.buy-now-btn {
+  padding: 15px 30px;
+  font-size: 18px;
+  background: gold;
+  color: black;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 0 20px gold;
+  transition: all 0.3s ease;
+  animation: pulse 1.5s infinite;
+}
+
+.buy-now-btn:hover {
+  background: #ffcc00;
+  color: black;
+  box-shadow: 0 0 30px #ffcc00;
+}
+
+.buy-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  max-width: 100%;
+  height: 75%;
+  position: absolute;
+  right: 30px;
+  bottom: 150px;
+  z-index: 1; /* Lower than text */
+  animation: floatBhikux 6s ease-in-out infinite;
+  opacity: 0.8; /* Optional for blending effect */
+  }
+.animated-buy-img {
+  width: 400px;
+  max-width: 100%;
+  animation: floatY 3s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 20px gold; }
+  50% { transform: scale(1.05); box-shadow: 0 0 30px #ffd700; }
+  100% { transform: scale(1); box-shadow: 0 0 20px gold; }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 @media (max-width: 900px) {
   .how-to-buy-section { flex-direction: column; gap: 1.5rem; }
   .buy-image, .buy-text { min-width: 0; }
