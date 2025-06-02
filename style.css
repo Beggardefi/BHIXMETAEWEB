@@ -379,7 +379,10 @@ form button:hover {
 .navbar-menu.active {
   display: flex;
 }
-
+.navbar-menu {
+  max-height: 90vh; /* or 80vh depending on your header height */
+  overflow-y: auto;
+}
 .menu-toggle {
   display: block;
   cursor: pointer;
@@ -539,6 +542,9 @@ form button:hover {
   .navbar-menu.active {
     display: flex;
   }
+.mobile-nav {
+  max-height: 90vh;
+  overflow-y: auto;
 }
 #whitepaper {
   text-align: center;
@@ -1403,21 +1409,6 @@ button:focus, a:focus {
   color: #ffd700;
   border-bottom: 2px solid #ffd700;
 }
-.scrollable-menu {
-  max-height: 80vh;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-
-.scrollable-menu::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollable-menu::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 3px;
-}
-
-.scrollable-menu::-webkit-scrollbar-track {
-  background: transparent;
+html {
+  scroll-behavior: smooth;
 }
