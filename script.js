@@ -238,4 +238,26 @@ async function initializeBotAccess() {
     botUI.style.display = "none";
   }
 }
-  
+//-- raised amount handling--//
+const presaleAbiExtended = [
+  "function totalUSDRaised() view returns (uint256)", // Make sure this function exists in your contract
+];
+
+// Presale target in USD
+const presaleTarget = 1500000000;
+
+async function updatePresaleProgress() {
+  if (!provider) return;
+
+  try {
+    const presaleContract = new ethers.Contract(presaleAddress, presaleAbiExtended, provider);
+    const raisedRaw = await presaleContract.totalUSDRaised(); // Assumes amount is in 18 decimals
+    const raised = parseFloat(ethers.utils.formatUnits(raisedRaw, 18));
+
+    const percentage = Math.min((raised / presaleTarget) * 100, 100).toFixed(2);
+    document.getElementById("presale-progress").style.width = `${percentage}%`;
+    document.getElementById("progress-text").innerText = `Raised: $${raised.toLocaleString()} / Target: $${presaleTarget.toLocaleString()}`;
+  } catch (err) {
+    console.error("Failed to fetch presale progress:", err);
+  }
+}
