@@ -1,3 +1,4 @@
+console.log("Script loaded!");
 // --- Countdown Timer ---
 const countdownEl = document.getElementById("countdown");
 async function startCountdown() {
