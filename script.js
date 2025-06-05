@@ -47,11 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Wallet Connect ---
+// --- Wallet Connect ---
 let provider;
 let signer;
 let currentAccount = "";
-const usdtAddress = "0x14f3d88351B5c67801895E667b51a2b8E412A26F";
-const presaleAddress = "0x14f3d88351B5c67801895E667b51a2b8E412A26F";
+
+// ✅ Replace with correct addresses
+const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC (mainnet)
+const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Your Presale Contract
 
 async function connectWallet() {
   try {
@@ -70,13 +73,35 @@ async function connectWallet() {
     signer = provider.getSigner();
     currentAccount = await signer.getAddress();
     document.getElementById("walletBalance").innerText = currentAccount;
-    initializeBotAccess();
+
+    initializeBotAccess(); // If this depends on connected wallet
   } catch (error) {
     console.error("Wallet connection failed", error);
   }
 }
-document.getElementById("connectWallet").addEventListener("click", connectWallet);
 
+document.getElementById("connectWallet").addEventListener("click", connectWallet);
+//--- Disconnect wallet---
+let walletConnected = false;
+
+async function connectWallet() {
+  try {
+    if (!walletConnected) {
+      // Existing connect logic...
+      document.getElementById("connectWallet").innerText = "Disconnect Wallet";
+      walletConnected = true;
+    } else {
+      provider = null;
+      signer = null;
+      currentAccount = "";
+      document.getElementById("walletBalance").innerText = "Not Connected";
+      document.getElementById("connectWallet").innerText = "Connect Wallet";
+      walletConnected = false;
+    }
+  } catch (error) {
+    console.error("Wallet connection failed", error);
+  }
+}
 // --- Buy with BNB ---
 async function buyWithBNB() {
   const amountBNB = prompt("Enter amount in BNB:");
@@ -108,13 +133,17 @@ async function buyWithUSDT() {
 
   const amount = ethers.utils.parseUnits(amountUSDT, 18);
   const usdt = new ethers.Contract(usdtAddress, USDT_ABI, signer);
+  const presaleAbi = ["function buyWithUSDT(uint256 amount) public"];
+  const presale = new ethers.Contract(presaleAddress, presaleAbi, signer);
 
   try {
     const tx1 = await usdt.approve(presaleAddress, amount);
     await tx1.wait();
-    const tx2 = await usdt.transfer(presaleAddress, amount);
+
+    const tx2 = await presale.buyWithUSDT(amount);
     await tx2.wait();
-    alert("USDT sent successfully! You'll get BHIKX after presale.");
+
+    alert("USDT purchase successful! You'll receive BHIX tokens after presale.");
   } catch (err) {
     console.error(err);
     alert("USDT transaction failed.");
