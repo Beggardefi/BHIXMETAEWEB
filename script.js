@@ -56,44 +56,56 @@ document.addEventListener("DOMContentLoaded", () => {
 let provider;
 let signer;
 let currentAccount = "";
-let walletConnected = false;
+
+// Replace with your actual addresses
+const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
+const bhixAddress = "0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6";  // Your BHIX token
+const usdtAbi = ["function balanceOf(address) view returns (uint256)"];
+const bhixAbi = ["function balanceOf(address) view returns (uint256)"];
 
 async function connectWallet() {
   try {
-    if (!walletConnected) {
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-      } else {
-        const walletConnectProvider = new WalletConnectProvider.default({
-          rpc: { 56: "https://bsc-dataseed.binance.org/" },
-          chainId: 56
-        });
-        await walletConnectProvider.enable();
-        provider = new ethers.providers.Web3Provider(walletConnectProvider);
-      }
-
-      signer = provider.getSigner();
-      currentAccount = await signer.getAddress();
-
-      // Update UI
-      document.getElementById("walletBalance").innerText = currentAccount;
-      document.getElementById("connectWallet").innerText = "Disconnect Wallet";
-      walletConnected = true;
-
-      initializeBotAccess(); // If needed on connect
+    if (window.ethereum) {
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
     } else {
-      // Disconnect wallet (clear UI state)
-      provider = null;
-      signer = null;
-      currentAccount = "";
-      document.getElementById("walletBalance").innerText = "Not Connected";
-      document.getElementById("connectWallet").innerText = "Connect Wallet";
-      walletConnected = false;
+      const walletConnectProvider = new WalletConnectProvider({
+        rpc: { 56: "https://bsc-dataseed.binance.org/" },
+        chainId: 56
+      });
+      await walletConnectProvider.enable();
+      provider = new ethers.providers.Web3Provider(walletConnectProvider);
     }
+
+    signer = provider.getSigner();
+    currentAccount = await signer.getAddress();
+
+    // ✅ Show wallet address
+    document.getElementById("walletAddress").innerText = `Address: ${currentAccount}`;
+
+    // ✅ Get BNB balance
+    const bnbBalance = await provider.getBalance(currentAccount);
+    const bnbFormatted = ethers.utils.formatEther(bnbBalance);
+    document.getElementById("bnbBalance").innerText = `BNB: ${parseFloat(bnbFormatted).toFixed(4)}`;
+
+    // ✅ Get USDT balance
+    const usdt = new ethers.Contract(usdtAddress, usdtAbi, provider);
+    const usdtRaw = await usdt.balanceOf(currentAccount);
+    const usdtFormatted = ethers.utils.formatUnits(usdtRaw, 18);
+    document.getElementById("usdtBalance").innerText = `USDT: ${parseFloat(usdtFormatted).toFixed(2)}`;
+
+    // ✅ Get BHIX balance
+    const bhix = new ethers.Contract(bhixAddress, bhixAbi, provider);
+    const bhixRaw = await bhix.balanceOf(currentAccount);
+    const bhixFormatted = ethers.utils.formatUnits(bhixRaw, 18);
+    document.getElementById("bhixBalance").innerText = `BHIX: ${parseFloat(bhixFormatted).toFixed(2)}`;
+
+    walletConnected = true;
+    document.getElementById("connectWallet").innerText = "Disconnect Wallet";
+
+    initializeBotAccess(); // Optional: depends on staking
   } catch (error) {
     console.error("Wallet connection failed", error);
-    alert("Wallet connection failed. Check console for details.");
   }
 }
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
