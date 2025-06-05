@@ -24,7 +24,9 @@ async function startCountdown() {
     countdownEl.innerText = `${days}d ${hours}h ${mins}m ${secs}s`;
   }, 1000);
 }
-
+document.addEventListener("DOMContentLoaded", () => {
+  startCountdown();
+});
 // --- Navbar Toggle ---
 document.querySelector(".menu-toggle").addEventListener("click", () => {
   document.getElementById("mainMenu").classList.toggle("active");
@@ -71,9 +73,10 @@ const erc20Abi = [
 ];
 
 const presaleAbi = [
-  "function buyWithUSDT(uint256 usdtAmount, address referrer) external"
+  "function buyWithUSDT(uint256 usdtAmount, address referrer) external",
+  "function totalUSDRaised() view returns (uint256)",
+  "function presaleEndTime() view returns (uint256)"
 ];
-
 async function connectWallet() {
   try {
     if (walletConnected) {
@@ -142,7 +145,10 @@ function disconnectWallet() {
 }
 
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
-
+document.addEventListener("DOMContentLoaded", async () => {
+  startCountdown();
+  await updatePresaleProgress();
+});
 // Buy with USDT
 async function buyWithUSDT(amountInUSD, referrer = ethers.constants.AddressZero) {
   if (!walletConnected) {
@@ -190,11 +196,24 @@ async function buyWithBNB() {
   }
 }
 document.getElementById("buyBNB").addEventListener("click", buyWithBNB);
+await updatePresaleProgress();
 // --- Redeem Rewards (Simulated) ---
-function redeemRewards() {
-  if (!currentAccount) return alert("Connect wallet to redeem.");
-  document.getElementById("rewardBalance").innerText = "0 USDT";
-  alert("Rewards claimed! (Simulation)");
+const utilityAbi = [
+  "function claimRewards() external"
+];
+async function redeemRewards() {
+  if (!walletConnected) return alert("Connect wallet to redeem.");
+
+  try {
+    const utilityContract = new ethers.Contract(bhixUtilityAddress, utilityAbi, signer);
+    const tx = await utilityContract.claimRewards();
+    await tx.wait();
+    alert("Rewards claimed successfully!");
+    await updateBalances();
+  } catch (error) {
+    console.error("Claim failed:", error);
+    alert("Failed to claim rewards.");
+  }
 }
 
 // --- Referral Copy ---
@@ -239,9 +258,6 @@ async function initializeBotAccess() {
   }
 }
 //-- raised amount handling--//
-const presaleAbiExtended = [
-  "function totalUSDRaised() view returns (uint256)", // Make sure this function exists in your contract
-];
 
 // Presale target in USD
 const presaleTarget = 1500000000;
