@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f3f4f6;
+  color: #1e293b;
+}
+
+.header {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(to right, #0f172a, #1e293b);
+  color: white;
+}
+
+.staking-warning {
+  text-align: center;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+
+.job-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.option-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  padding: 2rem;
+  width: 280px;
+  text-align: center;
+}
+
+.option-card h2 {
+  margin-top: 0;
+}
+
+.option-card button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  background: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.disabled .option-card {
+  opacity: 0.6;
+}
