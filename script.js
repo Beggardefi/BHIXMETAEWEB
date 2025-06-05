@@ -266,7 +266,7 @@ async function updatePresaleProgress() {
   if (!provider) return;
 
   try {
-    const presaleContract = new ethers.Contract(presaleAddress, presaleAbiExtended, provider);
+    const presaleContract = new ethers.Contract(presaleAddress, presaleAbi, provider);
     const raisedRaw = await presaleContract.totalUSDRaised(); // Assumes amount is in 18 decimals
     const raised = parseFloat(ethers.utils.formatUnits(raisedRaw, 18));
 
