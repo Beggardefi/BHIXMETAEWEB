@@ -60,6 +60,7 @@ let currentAccount = "";
 // Replace with your actual addresses
 const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
 const bhixAddress = "0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6";  // Your BHIX token
+const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Your deployed presale contract
 const usdtAbi = ["function balanceOf(address) view returns (uint256)"];
 const bhixAbi = ["function balanceOf(address) view returns (uint256)"];
 
