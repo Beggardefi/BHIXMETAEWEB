@@ -67,18 +67,31 @@
   <div class="presale-content">
     <h2>Buy BHIX Tokens</h2>
     <p>1 USDT = 100 BHIX</p>
+
+    <!-- Action Buttons -->
     <div class="buy-buttons">
+      <button id="connectWallet">Connect Wallet</button>
       <button id="buyBNB">Buy with BNB</button>
       <button id="buyUSDT">Buy with USDT</button>
-      <button id="connectWallet">Connect Wallet</button>
     </div>
-    <p>Wallet Balance: <span id="walletBalance">--</span></p>
-    <div class="progress-bar">
-      <div id="presale-progress" class="progress"></div>
+
+    <!-- Wallet Info -->
+    <div class="wallet-info">
+      <p>Address: <span id="walletAddress">Not connected</span></p>
+      <p>BNB Balance: <span id="bnbBalance">0</span></p>
+      <p>USDT Balance: <span id="usdtBalance">0</span></p>
+      <p>BHIX Balance: <span id="bhixBalance">0</span></p>
     </div>
-    <p id="progress-text">Raised: $25,000 / Target: $300,000</p>
+
+    <!-- Presale Progress -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div id="presale-progress" class="progress" style="width: 0%;"></div>
+      </div>
+      <p id="progress-text">Raised: $0 / Target: $300,000</p>
+    </div>
   </div>
-</section>
+    </section>
 
     <!-- How to Buy -->
     <section id="how-to-buy" class="how-to-buy-section">
