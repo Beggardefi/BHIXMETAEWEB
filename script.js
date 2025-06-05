@@ -56,21 +56,37 @@ document.addEventListener("DOMContentLoaded", () => {
 let provider;
 let signer;
 let currentAccount = "";
+let walletConnected = false;
 
-// Replace with your actual addresses
+// Contract addresses
 const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
 const bhixAddress = "0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6";  // Your BHIX token
-const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Your deployed presale contract
-const usdtAbi = ["function balanceOf(address) view returns (uint256)"];
-const bhixAbi = ["function balanceOf(address) view returns (uint256)"];
+const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
+
+// ABIs
+const erc20Abi = [
+  "function balanceOf(address) view returns (uint256)",
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function allowance(address owner, address spender) view returns (uint256)"
+];
+
+const presaleAbi = [
+  "function buyWithUSDT(uint256 usdtAmount, address referrer) external"
+];
 
 async function connectWallet() {
   try {
+    if (walletConnected) {
+      disconnectWallet();
+      return;
+    }
+
+    // Detect wallet
     if (window.ethereum) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
     } else {
-      const walletConnectProvider = new WalletConnectProvider({
+      const walletConnectProvider = new WalletConnectProvider.default({
         rpc: { 56: "https://bsc-dataseed.binance.org/" },
         chainId: 56
       });
@@ -80,36 +96,82 @@ async function connectWallet() {
 
     signer = provider.getSigner();
     currentAccount = await signer.getAddress();
-
-    // ✅ Show wallet address
-    document.getElementById("walletAddress").innerText = `Address: ${currentAccount}`;
-
-    // ✅ Get BNB balance
-    const bnbBalance = await provider.getBalance(currentAccount);
-    const bnbFormatted = ethers.utils.formatEther(bnbBalance);
-    document.getElementById("bnbBalance").innerText = `BNB: ${parseFloat(bnbFormatted).toFixed(4)}`;
-
-    // ✅ Get USDT balance
-    const usdt = new ethers.Contract(usdtAddress, usdtAbi, provider);
-    const usdtRaw = await usdt.balanceOf(currentAccount);
-    const usdtFormatted = ethers.utils.formatUnits(usdtRaw, 18);
-    document.getElementById("usdtBalance").innerText = `USDT: ${parseFloat(usdtFormatted).toFixed(2)}`;
-
-    // ✅ Get BHIX balance
-    const bhix = new ethers.Contract(bhixAddress, bhixAbi, provider);
-    const bhixRaw = await bhix.balanceOf(currentAccount);
-    const bhixFormatted = ethers.utils.formatUnits(bhixRaw, 18);
-    document.getElementById("bhixBalance").innerText = `BHIX: ${parseFloat(bhixFormatted).toFixed(2)}`;
-
     walletConnected = true;
+
+    document.getElementById("walletAddress").innerText = `Address: ${currentAccount}`;
     document.getElementById("connectWallet").innerText = "Disconnect Wallet";
 
-    initializeBotAccess(); // Optional: depends on staking
+    await updateBalances();
   } catch (error) {
     console.error("Wallet connection failed", error);
   }
 }
+
+async function updateBalances() {
+  try {
+    const bnbBalance = await provider.getBalance(currentAccount);
+    document.getElementById("bnbBalance").innerText = `BNB: ${parseFloat(ethers.utils.formatEther(bnbBalance)).toFixed(4)}`;
+
+    const usdt = new ethers.Contract(usdtAddress, erc20Abi, provider);
+    const usdtRaw = await usdt.balanceOf(currentAccount);
+    document.getElementById("usdtBalance").innerText = `USDT: ${parseFloat(ethers.utils.formatUnits(usdtRaw, 18)).toFixed(2)}`;
+
+    const bhix = new ethers.Contract(bhixAddress, erc20Abi, provider);
+    const bhixRaw = await bhix.balanceOf(currentAccount);
+    document.getElementById("bhixBalance").innerText = `BHIX: ${parseFloat(ethers.utils.formatUnits(bhixRaw, 18)).toFixed(2)}`;
+  } catch (error) {
+    console.error("Failed to fetch balances", error);
+  }
+}
+
+function disconnectWallet() {
+  if (provider?.provider?.disconnect) {
+    provider.provider.disconnect();
+  }
+
+  provider = null;
+  signer = null;
+  currentAccount = "";
+  walletConnected = false;
+
+  document.getElementById("walletAddress").innerText = "Address: Not connected";
+  document.getElementById("bnbBalance").innerText = "BNB: 0";
+  document.getElementById("usdtBalance").innerText = "USDT: 0";
+  document.getElementById("bhixBalance").innerText = "BHIX: 0";
+  document.getElementById("connectWallet").innerText = "Connect Wallet";
+}
+
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
+
+// Buy with USDT
+async function buyWithUSDT(amountInUSD, referrer = ethers.constants.AddressZero) {
+  if (!walletConnected) {
+    alert("Please connect wallet first.");
+    return;
+  }
+
+  try {
+    const usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+    const presaleContract = new ethers.Contract(presaleAddress, presaleAbi, signer);
+
+    const amount = ethers.utils.parseUnits(amountInUSD.toString(), 18);
+
+    const allowance = await usdtContract.allowance(currentAccount, presaleAddress);
+    if (allowance.lt(amount)) {
+      const approveTx = await usdtContract.approve(presaleAddress, amount);
+      await approveTx.wait();
+    }
+
+    const buyTx = await presaleContract.buyWithUSDT(amount, referrer);
+    await buyTx.wait();
+
+    alert("BHIX purchased successfully!");
+    await updateBalances();
+  } catch (error) {
+    console.error("USDT purchase failed", error);
+    alert("Transaction failed. Check console for details.");
+  }
+}
 // --- Buy with BNB ---
 async function buyWithBNB() {
   const amountBNB = prompt("Enter amount in BNB:");
@@ -128,37 +190,6 @@ async function buyWithBNB() {
   }
 }
 document.getElementById("buyBNB").addEventListener("click", buyWithBNB);
-
-// --- Buy with USDT ---
-const USDT_ABI = [
-  "function transfer(address to, uint amount) public returns (bool)",
-  "function approve(address spender, uint amount) public returns (bool)"
-];
-
-async function buyWithUSDT() {
-  const amountUSDT = prompt("Enter amount in USDT:");
-  if (!amountUSDT || isNaN(amountUSDT)) return alert("Invalid USDT amount.");
-
-  const amount = ethers.utils.parseUnits(amountUSDT, 18);
-  const usdt = new ethers.Contract(usdtAddress, USDT_ABI, signer);
-  const presaleAbi = ["function buyWithUSDT(uint256 amount) public"];
-  const presale = new ethers.Contract(presaleAddress, presaleAbi, signer);
-
-  try {
-    const tx1 = await usdt.approve(presaleAddress, amount);
-    await tx1.wait();
-
-    const tx2 = await presale.buyWithUSDT(amount);
-    await tx2.wait();
-
-    alert("USDT purchase successful! You'll receive BHIX tokens after presale.");
-  } catch (err) {
-    console.error(err);
-    alert("USDT transaction failed.");
-  }
-}
-document.getElementById("buyUSDT").addEventListener("click", buyWithUSDT);
-
 // --- Redeem Rewards (Simulated) ---
 function redeemRewards() {
   if (!currentAccount) return alert("Connect wallet to redeem.");
