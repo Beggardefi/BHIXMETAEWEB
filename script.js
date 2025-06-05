@@ -1,23 +1,29 @@
 // --- Countdown Timer ---
 const countdownEl = document.getElementById("countdown");
-const presaleEndDate = new Date("2025-06-30T23:59:59").getTime();
-const countdownTimer = setInterval(() => {
-  const now = new Date().getTime();
-  const distance = presaleEndDate - now;
+async function startCountdown() {
+  const presaleAbi = ["function presaleEndTime() public view returns (uint256)"];
+  const presale = new ethers.Contract(presaleAddress, presaleAbi, provider);
+  const endTime = await presale.presaleEndTime();
+  const countdownEl = document.getElementById("countdown");
 
-  if (distance < 0) {
-    clearInterval(countdownTimer);
-    countdownEl.innerHTML = "Presale Ended";
-    return;
-  }
+  const countdownTimer = setInterval(async () => {
+    const now = Math.floor(Date.now() / 1000); // in seconds
+    const distance = endTime - now;
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((distance % (1000 * 60)) / 1000);
+    if (distance <= 0) {
+      clearInterval(countdownTimer);
+      countdownEl.innerText = "Presale Ended";
+      return;
+    }
 
-  countdownEl.innerHTML = `${days}d ${hours}h ${mins}m ${secs}s`;
-}, 1000);
+    const days = Math.floor(distance / 86400);
+    const hours = Math.floor((distance % 86400) / 3600);
+    const mins = Math.floor((distance % 3600) / 60);
+    const secs = distance % 60;
+
+    countdownEl.innerText = `${days}d ${hours}h ${mins}m ${secs}s`;
+  }, 1000);
+}
 
 // --- Navbar Toggle ---
 document.querySelector(".menu-toggle").addEventListener("click", () => {
@@ -47,50 +53,37 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Wallet Connect ---
-// --- Wallet Connect ---
 let provider;
 let signer;
 let currentAccount = "";
-
-// ✅ Replace with correct addresses
-const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC (mainnet)
-const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Your Presale Contract
-
-async function connectWallet() {
-  try {
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-    } else {
-      const walletConnectProvider = new WalletConnectProvider({
-        rpc: { 56: "https://bsc-dataseed.binance.org/" },
-        chainId: 56
-      });
-      await walletConnectProvider.enable();
-      provider = new ethers.providers.Web3Provider(walletConnectProvider);
-    }
-
-    signer = provider.getSigner();
-    currentAccount = await signer.getAddress();
-    document.getElementById("walletBalance").innerText = currentAccount;
-
-    initializeBotAccess(); // If this depends on connected wallet
-  } catch (error) {
-    console.error("Wallet connection failed", error);
-  }
-}
-
-document.getElementById("connectWallet").addEventListener("click", connectWallet);
-//--- Disconnect wallet---
 let walletConnected = false;
 
 async function connectWallet() {
   try {
     if (!walletConnected) {
-      // Existing connect logic...
+      if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+      } else {
+        const walletConnectProvider = new WalletConnectProvider.default({
+          rpc: { 56: "https://bsc-dataseed.binance.org/" },
+          chainId: 56
+        });
+        await walletConnectProvider.enable();
+        provider = new ethers.providers.Web3Provider(walletConnectProvider);
+      }
+
+      signer = provider.getSigner();
+      currentAccount = await signer.getAddress();
+
+      // Update UI
+      document.getElementById("walletBalance").innerText = currentAccount;
       document.getElementById("connectWallet").innerText = "Disconnect Wallet";
       walletConnected = true;
+
+      initializeBotAccess(); // If needed on connect
     } else {
+      // Disconnect wallet (clear UI state)
       provider = null;
       signer = null;
       currentAccount = "";
@@ -100,8 +93,10 @@ async function connectWallet() {
     }
   } catch (error) {
     console.error("Wallet connection failed", error);
+    alert("Wallet connection failed. Check console for details.");
   }
 }
+document.getElementById("connectWallet").addEventListener("click", connectWallet);
 // --- Buy with BNB ---
 async function buyWithBNB() {
   const amountBNB = prompt("Enter amount in BNB:");
