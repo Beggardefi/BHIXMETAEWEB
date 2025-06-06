@@ -22,7 +22,6 @@ async function startCountdown() {
       provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
     }
 
-    const presaleAbi = ["function presaleEndTime() public view returns (uint256)"];
     const presale = new ethers.Contract(presaleAddress, presaleAbi, provider);
     const endTime = await presale.presaleEndTime();
     const endTimestamp = Number(endTime.toString()) * 1000; // Convert to ms
@@ -149,8 +148,9 @@ async function updateBalances() {
 }
 
 function disconnectWallet() {
+async function disconnectWallet() {
   if (provider?.provider?.disconnect && typeof provider.provider.disconnect === "function") {
-  await provider.provider.disconnect(); // Add `await` to ensure full disconnect
+    await provider.provider.disconnect();
   }
 
   provider = null;
@@ -164,9 +164,8 @@ function disconnectWallet() {
   document.getElementById("bhixBalance").innerText = "BHIX: 0";
   document.getElementById("connectWallet").innerText = "Connect Wallet";
 }
-
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
-
+await initializeBotAccess();
 // Buy with USDT
 async function buyWithUSDT(amountInUSD, referrer = ethers.constants.AddressZero) {
   if (!walletConnected) {
@@ -195,37 +194,57 @@ async function buyWithUSDT(amountInUSD, referrer = ethers.constants.AddressZero)
     console.error("USDT purchase failed", error);
     alert("Transaction failed. Check console for details.");
   }
+const referrer = getReferrer();
+await buyWithUSDT(amountInUSD, referrer);
+}
 }
 // --- Buy with BNB ---
-async function buyWithBNB() {
-  const amountBNB = prompt("Enter amount in BNB:");
-  if (!amountBNB || isNaN(amountBNB)) return alert("Invalid BNB amount.");
+async function buyWithUSDT(amountInUSD, referrer = ethers.constants.AddressZero) {
+  if (!walletConnected) {
+    alert("Please connect wallet first.");
+    return;
+  }
 
   try {
-    const tx = await signer.sendTransaction({
-      to: presaleAddress,
-      value: ethers.utils.parseEther(amountBNB)
-    });
-    await tx.wait();
-    alert("BNB sent successfully! You'll get BHIKX after presale.");
+    const usdtContract = new ethers.Contract(usdtAddress, erc20Abi, signer);
+    const presaleContract = new ethers.Contract(presaleAddress, presaleAbi, signer);
+
+    const amount = ethers.utils.parseUnits(amountInUSD.toString(), 18);
+
+    const allowance = await usdtContract.allowance(currentAccount, presaleAddress);
+    if (allowance.lt(amount)) {
+      const approveTx = await usdtContract.approve(presaleAddress, amount);
+      await approveTx.wait();
+    }
+
+    const buyTx = await presaleContract.buyWithUSDT(amount, referrer);
+    await buyTx.wait();
+
+    alert("BHIX purchased successfully!");
+    await updateBalances();
   } catch (error) {
-    console.error(error);
-    alert("Transaction failed.");
+    console.error("USDT purchase failed", error);
+    alert("Transaction failed. Check console for details.");
   }
 }
-document.getElementById("buyBNB").addEventListener("click", buyWitBNB);
+document.getElementById("buyBNB").addEventListener("click", buyWithBNB);
 (async () => {
   await updatePresaleProgress();
 })(); 
 // --- Referral Copy ---
 function copyReferral() {
-  const baseUrl = window.locati = window.location.origin;
+  const baseUrl = window.location.origin;
 document.getElementById("refLink").value = `${baseUrl}/?ref=${currentAccount}`;
   const link = document.getElementById("refLink");
   link.select();
   link.setSelectionRange(0, 99999);
   document.execCommand("copy");
   alert("Referral link copied!");
+}
+function getReferrer() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get("ref");
+  return ethers.utils.isAddress(ref) ? ref : ethers.constants.AddressZero;
 }
 
 // --- Bot Key Access ---
