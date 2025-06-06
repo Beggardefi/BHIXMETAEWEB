@@ -89,9 +89,6 @@ document.getElementById("connectWallet").addEventListener("click", async () => {
     alert("Please install MetaMask wallet.");
   }
 });
-//--show wallet address--//
-userAddress = await signer.getAddress();
-document.getElementById("walletAddress").innerText = userAddress;
 // Update all balances
 async function updateBalances() {
   if (!provider || !signer || !userAddress) return;
