@@ -64,6 +64,7 @@ fetch('./abi/bhix.json')
   .then(abi => tokenAbi = abi);
 
 // Connect Wallet
+// Connect MetaMask wallet
 document.getElementById("connectWallet").addEventListener("click", async () => {
   const connectBtn = document.getElementById("connectWallet");
 
@@ -76,17 +77,24 @@ document.getElementById("connectWallet").addEventListener("click", async () => {
     return;
   }
 
-  if (window.ethereum) {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
+  if (!window.ethereum) {
+    return alert("MetaMask is not installed!");
+  }
+
+  try {
     await window.ethereum.request({ method: "eth_requestAccounts" });
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
 
-    document.getElementById("walletAddress").innerText = userAddress;
     connectBtn.innerText = "Disconnect";
+    document.getElementById("walletAddress").innerText = userAddress;
+
     updateBalances();
-  } else {
-    alert("Please install MetaMask wallet.");
+  } catch (err) {
+    console.error(err);
+    alert("Wallet connection failed.");
   }
 });
 // Update all balances
