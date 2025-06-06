@@ -76,23 +76,22 @@ document.getElementById("connectWallet").addEventListener("click", async () => {
     return;
   }
 
-  const walletConnectProvider = new WalletConnectProvider.default({
-    rpc: { 56: "https://bsc-dataseed.binance.org/" },
-    chainId: 56
-  });
+  if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
 
-  await walletConnectProvider.enable();
-
-  provider = new ethers.providers.Web3Provider(walletConnectProvider);
-  signer = provider.getSigner();
-  userAddress = await signer.getAddress();
-
-  document.getElementById("walletAddress").innerText = userAddress;
-  connectBtn.innerText = "Disconnect";
-
-  updateBalances();
+    document.getElementById("walletAddress").innerText = userAddress;
+    connectBtn.innerText = "Disconnect";
+    updateBalances();
+  } else {
+    alert("Please install MetaMask wallet.");
+  }
 });
-
+//--show wallet address--//
+userAddress = await signer.getAddress();
+document.getElementById("walletAddress").innerText = userAddress;
 // Update all balances
 async function updateBalances() {
   if (!provider || !signer || !userAddress) return;
