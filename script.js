@@ -47,82 +47,110 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- Wallet Connect ---
-let provider;
-let signer;
-let currentAccount = "";
+let provider, signer, userAddress;
+const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3";
+const bhixTokenAddress = "0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6";
 const usdtAddress = "0x55d398326f99059fF775485246999027B3197955";
-const bhixAddress = "0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6";  // Your BHIX token
-const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
 
-async function connectWallet() {
+let presaleAbi, tokenAbi;
+
+// Load ABIs
+fetch('./abi/bhixpresale.json')
+  .then(res => res.json())
+  .then(abi => presaleAbi = abi);
+
+fetch('./abi/bhix.json')
+  .then(res => res.json())
+  .then(abi => tokenAbi = abi);
+
+// Connect Wallet
+document.getElementById("connectWallet").addEventListener("click", async () => {
+  const connectBtn = document.getElementById("connectWallet");
+
+  if (connectBtn.innerText === "Disconnect") {
+    provider = null;
+    signer = null;
+    userAddress = null;
+    connectBtn.innerText = "Connect Wallet";
+    document.getElementById("walletAddress").innerText = "Not connected";
+    return;
+  }
+
+  const walletConnectProvider = new WalletConnectProvider.default({
+    rpc: { 56: "https://bsc-dataseed.binance.org/" },
+    chainId: 56
+  });
+
+  await walletConnectProvider.enable();
+
+  provider = new ethers.providers.Web3Provider(walletConnectProvider);
+  signer = provider.getSigner();
+  userAddress = await signer.getAddress();
+
+  document.getElementById("walletAddress").innerText = userAddress;
+  connectBtn.innerText = "Disconnect";
+
+  updateBalances();
+});
+
+// Update all balances
+async function updateBalances() {
+  if (!provider || !signer || !userAddress) return;
+
+  const bnb = await provider.getBalance(userAddress);
+  document.getElementById("bnbBalance").innerText = ethers.utils.formatEther(bnb);
+
+  const usdt = new ethers.Contract(usdtAddress, tokenAbi, provider);
+  const usdtBal = await usdt.balanceOf(userAddress);
+  document.getElementById("usdtBalance").innerText = ethers.utils.formatUnits(usdtBal, 18);
+
+  const bhix = new ethers.Contract(bhixTokenAddress, tokenAbi, provider);
+  const bhixBal = await bhix.balanceOf(userAddress);
+  document.getElementById("bhixBalance").innerText = ethers.utils.formatUnits(bhixBal, 18);
+}
+
+// Buy with BNB
+document.getElementById("buyBNB").addEventListener("click", async () => {
+  const amount = prompt("Enter BNB amount to spend:");
+  if (!amount) return;
+
+  const value = ethers.utils.parseEther(amount);
+  const presale = new ethers.Contract(presaleAddress, presaleAbi, signer);
+
   try {
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-    } else {
-      const walletConnectProvider = new WalletConnectProvider.default({
-        rpc: { 56: "https://bsc-dataseed.binance.org/" },
-        chainId: 56
-      });
-      await walletConnectProvider.enable();
-      provider = new ethers.providers.Web3Provider(walletConnectProvider);
+    const tx = await presale.buyWithBNB({ value });
+    await tx.wait();
+    alert("BNB Purchase Successful");
+    updateBalances();
+  } catch (err) {
+    alert("BNB Purchase Failed: " + err.message);
+  }
+});
+
+// Buy with USDT
+document.getElementById("buyUSDT").addEventListener("click", async () => {
+  const amount = prompt("Enter USDT amount to spend:");
+  if (!amount) return;
+
+  const value = ethers.utils.parseUnits(amount, 18);
+  const usdt = new ethers.Contract(usdtAddress, tokenAbi, signer);
+  const presale = new ethers.Contract(presaleAddress, presaleAbi, signer);
+
+  try {
+    const allowance = await usdt.allowance(userAddress, presaleAddress);
+    if (allowance.lt(value)) {
+      const approveTx = await usdt.approve(presaleAddress, value);
+      await approveTx.wait();
     }
 
-    signer = provider.getSigner();
-    currentAccount = await signer.getAddress();
-    document.getElementById("walletBalance").innerText = currentAccount;
-    initializeBotAccess();
-  } catch (error) {
-    console.error("Wallet connection failed", error);
-  }
-}
-document.getElementById("connectWallet").addEventListener("click", connectWallet);
-
-// --- Buy with BNB ---
-async function buyWithBNB() {
-  const amountBNB = prompt("Enter amount in BNB:");
-  if (!amountBNB || isNaN(amountBNB)) return alert("Invalid BNB amount.");
-
-  try {
-    const tx = await signer.sendTransaction({
-      to: presaleAddress,
-      value: ethers.utils.parseEther(amountBNB)
-    });
+    const tx = await presale.buyWithUSDT(value);
     await tx.wait();
-    alert("BNB sent successfully! You'll get BHIKX after presale.");
-  } catch (error) {
-    console.error(error);
-    alert("Transaction failed.");
-  }
-}
-document.getElementById("buyBNB").addEventListener("click", buyWithBNB);
-
-// --- Buy with USDT ---
-const USDT_ABI = [
-  "function transfer(address to, uint amount) public returns (bool)",
-  "function approve(address spender, uint amount) public returns (bool)"
-];
-
-async function buyWithUSDT() {
-  const amountUSDT = prompt("Enter amount in USDT:");
-  if (!amountUSDT || isNaN(amountUSDT)) return alert("Invalid USDT amount.");
-
-  const amount = ethers.utils.parseUnits(amountUSDT, 18);
-  const usdt = new ethers.Contract(usdtAddress, USDT_ABI, signer);
-
-  try {
-    const tx1 = await usdt.approve(presaleAddress, amount);
-    await tx1.wait();
-    const tx2 = await usdt.transfer(presaleAddress, amount);
-    await tx2.wait();
-    alert("USDT sent successfully! You'll get BHIKX after presale.");
+    alert("USDT Purchase Successful");
+    updateBalances();
   } catch (err) {
-    console.error(err);
-    alert("USDT transaction failed.");
+    alert("USDT Purchase Failed: " + err.message);
   }
-}
-document.getElementById("buyUSDT").addEventListener("click", buyWithUSDT);
-
+});
 // --- Redeem Rewards (Simulated) ---
 function redeemRewards() {
   if (!currentAccount) return alert("Connect wallet to redeem.");
