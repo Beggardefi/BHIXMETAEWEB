@@ -25,8 +25,11 @@ async function startCountdown() {
     countdownEl.innerText = `${days}d ${hours}h ${mins}m ${secs}s`;
   }, 1000);
 }
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("Script loaded!");
   startCountdown();
+  showSlide(currentSlide);
+  await updatePresaleProgress();
 });
 // --- Navbar Toggle ---
 document.querySelector(".menu-toggle").addEventListener("click", () => {
@@ -65,7 +68,7 @@ let walletConnected = false;
 const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
 const bhixAddress = "0x03Fb7952f51e0478A1D38a56F3021CFca8a739F6";  // Your BHIX token
 const presaleAddress = "0xdC1E3E7F3502c7B3F47BB94F1C7f4B63934B6Cf3"; // Presale contract
-
+const bhixUtilityAddress = "0xYourUtilityContractAddressHere";
 // ABIs
 const erc20Abi = [
   "function balanceOf(address) view returns (uint256)",
@@ -146,10 +149,7 @@ function disconnectWallet() {
 }
 
 document.getElementById("connectWallet").addEventListener("click", connectWallet);
-document.addEventListener("DOMContentLoaded", async () => {
-  startCountdown();
-  await updatePresaleProgress();
-});
+
 // Buy with USDT
 async function buyWithUSDT(amountInUSD, referrer = ethers.constants.AddressZero) {
   if (!walletConnected) {
