@@ -1,13 +1,15 @@
 console.log("Script loaded!");
 // --- Countdown Timer ---
-const countdownEl = document.getElementById("countdown");
 async function startCountdown() {
+  if (!provider) {
+    provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+  }
   const presaleAbi = ["function presaleEndTime() public view returns (uint256)"];
   const presale = new ethers.Contract(presaleAddress, presaleAbi, provider);
   const endTime = await presale.presaleEndTime();
-  const countdownEl = document.getElementById("countdown");
 
-  const countdownTimer = setInterval(async () => {
+  const countdownEl = document.getElementById("countdown");
+  const countdownTimer = setInterval(() => {
     const now = Math.floor(Date.now() / 1000); // in seconds
     const distance = endTime - now;
 
@@ -54,8 +56,6 @@ function prevSlide() {
   currentSlide = (currentSlide - 1 + slides.length) % slides.length;
   showSlide(currentSlide);
 }
-document.addEventListener("DOMContentLoaded", () => {
-  showSlide(currentSlide);
 });
 
 // --- Wallet Connect ---
@@ -225,7 +225,8 @@ function copyReferral() {
   document.execCommand("copy");
   alert("Referral link copied!");
 }
-
+const urlParams = new URLSearchParams(window.location.search);
+const referrer = urlParams.get("ref");
 // --- Bot Key Access ---
 async function getStakedBalanceUSD() {
   // Simulated staking check
