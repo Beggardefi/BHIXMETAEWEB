@@ -268,6 +268,5 @@ botUI.style.display = "none";
 // -- check network id--//
 const { chainId } = await provider.getNetwork();
 if (chainId !== 56) alert("Please switch to Binance Smart Chain");
-Check is this correct and cfinal now
 
   
