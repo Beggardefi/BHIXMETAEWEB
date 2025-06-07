@@ -106,7 +106,7 @@ async function updateBalances() {
 
   const usdt = new ethers.Contract(usdtAddress, tokenAbi, provider);
   const usdtBal = await usdt.balanceOf(userAddress);
-  document.getElementById("usdtBalance").innerText = ethers.utils.formatUnits(usdtBal, 18);
+  document.getElementById("usdtBalance").innerText = ethers.utils.formatUnits(usdtBal, 6);
 
   const bhix = new ethers.Contract(bhixTokenAddress, tokenAbi, provider);
   const bhixBal = await bhix.balanceOf(userAddress);
@@ -131,20 +131,24 @@ document.getElementById("buyBNB").addEventListener("click", async () => {
   }
 });
 
+
 // Buy with USDT
 document.getElementById("buyUSDT").addEventListener("click", async () => {
   const amount = prompt("Enter USDT amount to spend:");
   if (!amount) return;
 
-  const value = ethers.utils.parseUnits(amount, 18);
+  const value = ethers.utils.parseUnits(amount, 6); // USDT uses 6 decimals ✅
   const usdt = new ethers.Contract(usdtAddress, tokenAbi, signer);
   const presale = new ethers.Contract(presaleAddress, presaleAbi, signer);
 
   try {
     const allowance = await usdt.allowance(userAddress, presaleAddress);
+    console.log("USDT Allowance:", allowance.toString());
+
     if (allowance.lt(value)) {
       const approveTx = await usdt.approve(presaleAddress, value);
       await approveTx.wait();
+      console.log("Approval confirmed");
     }
 
     const tx = await presale.buyWithUSDT(value);
@@ -152,7 +156,8 @@ document.getElementById("buyUSDT").addEventListener("click", async () => {
     alert("USDT Purchase Successful");
     updateBalances();
   } catch (err) {
-    alert("USDT Purchase Failed: " + err.message);
+    console.error(err);
+    alert("USDT Purchase Failed: " + (err?.reason || err.message));
   }
 });
 // --- Redeem Rewards (Simulated) ---
