@@ -1,160 +1,161 @@
-/* Global Styles */
-body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  line-height: 1.6;
-  color: #333;
+:root{
+  --brand:#0d47a1;
+  --brand-2:#1565c0;
+  --accent:#ffca28;
+  --ink:#0f1115;
+  --paper:#ffffff;
+  --muted:#e9eef7;
 }
 
-/* Navbar */
-.navbar {
-  background: #0d47a1;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+/* RESET */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;scroll-behavior:smooth}
+body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#222;background:#0b0d11}
 
-.navbar .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+/* NAVBAR */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:999}
+.navbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;
+  background:rgba(13,71,161,.25);
+  backdrop-filter: blur(8px);
+  transition:background .3s, box-shadow .3s;
 }
-
-.navbar ul {
-  list-style: none;
-  display: flex;
-  margin: 0;
-  padding: 0;
+.navbar.scrolled{
+  background:var(--brand);
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
 }
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:.5px;color:#fff;text-decoration:none}
 
-.navbar li {
-  margin: 0 12px;
+.nav-links{list-style:none;display:flex;gap:18px;margin:0}
+.nav-link{
+  color:#fff;text-decoration:none;font-weight:600;
+  padding:8px 10px;border-radius:8px;transition:color .2s, background .2s;
 }
+.nav-link:hover{color:var(--ink);background:var(--accent)}
+.nav-link.active{background:rgba(255,255,255,.12);}
 
-.navbar a {
-  color: white;
-  text-decoration: none;
-  font-size: 1rem;
-  transition: 0.3s;
-}
+.hamburger{display:none;background:none;border:none;cursor:pointer}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;margin:5px 0;transition:.3s}
 
-.navbar a:hover {
-  color: #ffca28;
-}
-
-/* Mobile Navbar */
-.menu-toggle {
-  display: none;
-  font-size: 2rem;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    background: #0d47a1;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 200px;
+/* MOBILE NAV */
+@media (max-width: 900px){
+  .hamburger{display:block}
+  .nav-links{
+    position:fixed;top:60px;right:16px;left:auto;
+    background:rgba(13,71,161,.98);
+    flex-direction:column;gap:0;border-radius:12px;overflow:hidden;
+    transform:translateY(-20px);opacity:0;pointer-events:none;
+    transition:transform .25s, opacity .25s;
+    min-width: 220px;
   }
-
-  .nav-links li {
-    margin: 15px 0;
-    text-align: center;
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-
-  .nav-links.show {
-    display: flex;
-  }
+  .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
+  .nav-links li{border-bottom:1px solid rgba(255,255,255,.1)}
+  .nav-link{display:block;padding:14px 16px}
 }
 
-/* Hero */
-.hero {
-  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://source.unsplash.com/1600x900/?city,development") center/cover no-repeat;
-  color: white;
-  text-align: center;
-  padding: 100px 20px;
+/* SECTIONS */
+.section{padding:110px 20px 70px; position:relative; scroll-margin-top:80px;}
+.section-light{background:#f6f8ff;color:#1a1f2b}
+.section-dark{background:linear-gradient(180deg,#0e1330 0%, #0b0d11 100%);color:#eef3ff}
+
+.container{max-width:1100px;margin:0 auto}
+.narrow{max-width:800px;margin:0 auto}
+
+/* HERO */
+.hero{
+  min-height:85vh; display:grid; place-items:center; text-align:center; color:#fff;
+  background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&q=80');
+  background-size:cover;background-position:center;
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background: radial-gradient(60% 60% at 50% 40%, rgba(13,71,161,.55) 0%, rgba(11,13,17,.85) 60%, rgba(11,13,17,1) 100%);
+  pointer-events:none;
+}
+.hero::after{
+  content:""; position:absolute; inset:0; z-index:0;
+  background: linear-gradient(120deg, rgba(21,101,192,.15), rgba(255,202,40,.15));
+  animation: sheen 8s linear infinite;
+  mix-blend-mode: screen; pointer-events:none;
+}
+@keyframes sheen{
+  0%{background-position:0% 50%}
+  100%{background-position:200% 50%}
+}
+.hero-content{position:relative; z-index:1}
+.hero h1{font-size:clamp(1.8rem,4vw,3rem);margin:0 0 10px}
+.hero p{opacity:.9;margin:0 0 18px}
+.btn{
+  display:inline-block;padding:12px 18px;border-radius:10px;
+  background:var(--accent);color:#111;text-decoration:none;font-weight:700;
+  box-shadow:0 8px 20px rgba(255,202,40,.25);transition:transform .2s, box-shadow .2s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(255,202,40,.35)}
+
+/* PARALLAX BACKGROUNDS */
+.parallax{background-attachment: fixed;background-size:cover;background-position:center}
+.parallax-a{background-image:url('https://images.unsplash.com/photo-1520975922325-24f207ee1575?w=1600&q=80')}
+
+/* HEADINGS */
+h2{font-weight:800;letter-spacing:.3px;margin:0 0 10px;color:var(--brand)}
+.section-dark h2{color:#fff}
+
+/* CATEGORIES CAROUSEL */
+.cat-carousel{position:relative;margin-top:22px}
+.cat-viewport{overflow:hidden}
+.cat-track{
+  display:flex; gap:16px; will-change:transform;
+  transition: transform .6s cubic-bezier(.22,.61,.36,1);
+  padding:8px 2px;
+}
+.cat-card{
+  background:#0f1327;border:1px solid rgba(255,255,255,.08);
+  border-radius:16px; overflow:hidden; color:#f0f3ff;
+  flex:0 0 calc(100% - 16px); /* mobile 1 per view */
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+  transform:translateZ(0);
+}
+.cat-card .thumb{height:180px;overflow:hidden;background:#111}
+.cat-card img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05)}
+.card-body{padding:14px 14px 18px}
+.card-body h3{margin:0 0 6px;font-size:1.1rem;color:#fff}
+.card-body p{margin:0;opacity:.85;font-size:.95rem}
+
+/* per view on wider screens */
+@media (min-width: 720px){
+  .cat-card{flex:0 0 calc(50% - 16px)}
+}
+@media (min-width: 1080px){
+  .cat-card{flex:0 0 calc(33.333% - 16px)}
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  animation: fadeInDown 1.5s;
+/* Carousel nav */
+.cat-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.9); color:#111; font-size:22px; font-weight:700;
+  display:grid;place-items:center; z-index:2; transition: background .2s, transform .2s;
 }
+.cat-nav:hover{background:#fff; transform:translateY(-50%) scale(1.05)}
+.cat-nav.prev{left:-4px}
+.cat-nav.next{right:-4px}
 
-.hero p {
-  font-size: 1.2rem;
-  animation: fadeInUp 2s;
+/* Dots */
+.cat-dots{display:flex;justify-content:center;gap:8px;margin-top:12px}
+.cat-dots button{
+  width:9px;height:9px;border-radius:50%;border:none;cursor:pointer;
+  background:#9fb6ff;opacity:.45;transition:.2s
 }
+.cat-dots button.active{opacity:1;background:var(--accent);transform:scale(1.15)}
 
-/* Sections */
-.section {
-  padding: 60px 20px;
-  text-align: center;
-}
+/* TYPO & UTIL */
+p{max-width:900px}
+.section .container, .section .narrow{animation: reveal .6s ease both}
+@keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-.section.dark {
-  background: #f5f5f5;
-}
+/* FOOTER */
+.footer{background:#0a0d18;color:#cbd6ff;text-align:center;padding:28px 16px}
 
-/* Cards */
-.categories {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.card {
-  background: #0d47a1;
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 200px;
-  transition: transform 0.3s, background 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  background: #1565c0;
-}
-
-/* Contact */
-.social-links a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: #0d47a1;
-  transition: color 0.3s;
-}
-
-.social-links a:hover {
-  color: #ff6f00;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  background: #0d47a1;
-  color: white;
-  padding: 15px;
-}
-
-/* Animations */
-@keyframes fadeInDown {
-  from {opacity: 0; transform: translateY(-30px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-
-@keyframes fadeInUp {
-  from {opacity: 0; transform: translateY(30px);}
-  to {opacity: 1; transform: translateY(0);}
-}
+/* Ensure sections aren't hidden under fixed navbar when linking */
+:target{scroll-margin-top:90px}
