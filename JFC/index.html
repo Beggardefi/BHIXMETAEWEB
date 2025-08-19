@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jhansi First Corporation</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <script defer src="script.js"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="site-header" id="top">
+    <nav class="navbar" id="navbar">
+      <div class="brand">
+        <a href="#home" class="logo">JFC</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#about" class="nav-link">About Us</a></li>
+        <li><a href="#mission" class="nav-link">Mission</a></li>
+        <li><a href="#vision" class="nav-link">Vision</a></li>
+        <li><a href="#categories" class="nav-link">Categories</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="home" class="hero section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Jhansi First Corporation</h1>
+      <p>Employment • Services • Agriculture • Business Partnerships</p>
+      <a href="#categories" class="btn">Explore Opportunities</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section section-light">
+    <div class="container">
+      <h2>About Us</h2>
+      <p>
+        JFC empowers communities with jobs, services, agriculture initiatives, and partnership-based business models.
+        We focus on sustainable growth, transparent opportunities, and local-to-global impact.
+      </p>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section id="mission" class="section section-dark parallax parallax-a">
+    <div class="container narrow">
+      <h2>Our Mission</h2>
+      <p>
+        To create sustainable opportunities and enable financial growth through
+        real-world businesses, inclusive employment, and collaborative partnerships.
+      </p>
+    </div>
+  </section>
+
+  <!-- VISION -->
+  <section id="vision" class="section section-light">
+    <div class="container narrow">
+      <h2>Our Vision</h2>
+      <p>
+        To make Jhansi a hub of innovation and prosperity—scaling ethical business,
+        modern skills, and community-driven investments across India and beyond.
+      </p>
+    </div>
+  </section>
+
+  <!-- CATEGORIES SLIDER -->
+  <section id="categories" class="section section-dark">
+    <div class="container">
+      <h2>Explore Our Work Fields</h2>
+
+      <div class="cat-carousel" id="cat-carousel">
+        <button class="cat-nav prev" aria-label="Previous">‹</button>
+
+        <div class="cat-viewport">
+          <div class="cat-track">
+            <!-- Slide 1 -->
+            <article class="cat-card">
+              <div class="thumb">
+                <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&q=80" alt="Employment & Jobs">
+              </div>
+              <div class="card-body">
+                <h3>Employment & Jobs</h3>
+                <p>Placements, remote work, and skill-matched roles for steady income.</p>
+              </div>
+            </article>
+
+            <!-- Slide 2 -->
+            <article class="cat-card">
+              <div class="thumb">
+                <img src="https://images.unsplash.com/photo-1529336953121-ad5a0d43d0d2?w=1200&q=80" alt="Services">
+              </div>
+              <div class="card-body">
+                <h3>Services</h3>
+                <p>Consulting, training, and support services to scale your growth.</p>
+              </div>
+            </article>
+
+            <!-- Slide 3 -->
+            <article class="cat-card">
+              <div class="thumb">
+                <img src="https://images.unsplash.com/photo-1500937386664-56f2d60b88b3?w=1200&q=80" alt="Agriculture">
+              </div>
+              <div class="card-body">
+                <h3>Agriculture</h3>
+                <p>Contract farming, agri-tech, and transparent farm-to-market models.</p>
+              </div>
+            </article>
+
+            <!-- Slide 4 -->
+            <article class="cat-card">
+              <div class="thumb">
+                <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=1200&q=80" alt="Business Partnerships">
+              </div>
+              <div class="card-body">
+                <h3>Business Partnerships</h3>
+                <p>Fixed-return or profit-sharing investments in real businesses.</p>
+              </div>
+            </article>
+
+            <!-- Slide 5 -->
+            <article class="cat-card">
+              <div class="thumb">
+                <img src="https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?w=1200&q=80" alt="Innovation & Training">
+              </div>
+              <div class="card-body">
+                <h3>Innovation & Training</h3>
+                <p>Skill building and digital adoption for modern entrepreneurship.</p>
+              </div>
+            </article>
+
+            <!-- Slide 6 (GIF example) -->
+            <article class="cat-card">
+              <div class="thumb">
+                <img src="https://media.giphy.com/media/3oEjHWbXcpeKhTktqY/giphy.gif" alt="Work From Home">
+              </div>
+              <div class="card-body">
+                <h3>Work From Home</h3>
+                <p>Flexible side-income projects, verified and beginner-friendly.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <button class="cat-nav next" aria-label="Next">›</button>
+      </div>
+
+      <div class="cat-dots" id="cat-dots" aria-label="Carousel Pagination"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section section-light">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <p>Email: info@jhansifirstcorp.com • Phone: +91 7505592073</p>
+      <div class="social">
+        <a href="#" aria-label="Facebook">Facebook</a> |
+        <a href="#" aria-label="Instagram">Instagram</a> |
+        <a href="#" aria-label="LinkedIn">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Jhansi First Corporation. All rights reserved.</p>
+  </footer>
+
+</body>
+  </html>
