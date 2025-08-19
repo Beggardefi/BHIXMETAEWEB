@@ -5,75 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jhansi First Corporation</title>
   <link rel="stylesheet" href="Style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <!-- Navigation Bar -->
+  <!-- Navbar -->
   <header>
     <nav class="navbar">
       <div class="logo">JFC</div>
-      <ul class="nav-links">
+      <input type="checkbox" id="menu-toggle">
+      <label for="menu-toggle" class="menu-icon"><i class="fas fa-bars"></i></label>
+      <ul class="menu">
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About Us</a></li>
         <li><a href="#mission">Mission</a></li>
         <li><a href="#vision">Vision</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-      <div class="menu-toggle">&#9776;</div>
     </nav>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero Section with Background -->
   <section id="home" class="hero">
     <div class="hero-content">
-      <h1 class="fade-in">Jhansi First Corporation</h1>
-      <p class="slide-up">Building a Better Future Together</p>
-      <a href="#about" class="btn">Discover More</a>
+      <h1>Welcome to Jhansi First Corporation</h1>
+      <p>Empowering growth through innovation and dedication.</p>
     </div>
   </section>
 
-  <!-- About Section -->
+  <!-- Image Slider -->
+  <section class="slider">
+    <div class="slides">
+      <div class="slide active"><img src="https://picsum.photos/id/1015/1200/500" alt="Business"></div>
+      <div class="slide"><img src="https://picsum.photos/id/1005/1200/500" alt="Team"></div>
+      <div class="slide"><img src="https://picsum.photos/id/1043/1200/500" alt="Innovation"></div>
+    </div>
+  </section>
+
+  <!-- About Us -->
   <section id="about" class="about">
     <h2>About Us</h2>
-    <p>Jhansi First Corporation (JFC) is dedicated to driving growth, innovation, and opportunities across multiple sectors including education, healthcare, automotive, and business consulting.</p>
+    <p>Jhansi First Corporation (JFC) is committed to creating innovative solutions and building opportunities for the community. We work across multiple sectors including automobiles, education, and consultancy.</p>
   </section>
 
-  <!-- Mission Section -->
-  <section id="mission" class="mission">
+  <!-- Mission -->
+  <section id="mission" class="info">
     <h2>Our Mission</h2>
-    <p>To empower communities with sustainable growth, opportunities, and resources that foster self-reliance and development.</p>
+    <p>To deliver excellence and empower the community with quality services, innovation, and sustainable business growth.</p>
   </section>
 
-  <!-- Vision Section -->
-  <section id="vision" class="vision">
+  <!-- Vision -->
+  <section id="vision" class="info">
     <h2>Our Vision</h2>
-    <p>To become a global leader in driving socio-economic transformation, making Jhansi and beyond a hub of innovation and prosperity.</p>
+    <p>To become a leader in diversified business solutions, recognized for trust, innovation, and community impact.</p>
   </section>
 
-  <!-- Contact Section -->
-  <section id="contact" class="contact">
+  <!-- Contact -->
+  <footer id="contact">
     <h2>Contact Us</h2>
-    <p>Email: info@jhansifirstcorp.com</p>
-    <p>Phone: +91-7505592073, +91-7307410214</p>
-    <div class="social-icons">
-      <a href="#">Facebook</a> |
-      <a href="#">Instagram</a> |
-      <a href="#">LinkedIn</a>
+    <p>Email: contact@jfc.com | Phone: +91-7505592073</p>
+    <div class="social">
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
     </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Jhansi First Corporation. All Rights Reserved.</p>
+    <p class="copy">&copy; 2025 Jhansi First Corporation. All rights reserved.</p>
   </footer>
 
-  <script>
-    // Toggle menu on mobile
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    menuToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
