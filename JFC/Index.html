@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jhansi First Corporation (JFC)</title>
+  <title>Jhansi First Corporation</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <!-- Navbar -->
+  <!-- Navigation Bar -->
   <header>
     <nav class="navbar">
       <div class="logo">JFC</div>
@@ -20,53 +19,61 @@
         <li><a href="#vision">Vision</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
+      <div class="menu-toggle">&#9776;</div>
     </nav>
   </header>
 
   <!-- Hero Section -->
   <section id="home" class="hero">
     <div class="hero-content">
-      <h1>Welcome to <span>Jhansi First Corporation</span></h1>
-      <p>Building Opportunities, Growth, and a Better Future</p>
-      <a href="#about" class="btn">Learn More</a>
+      <h1 class="fade-in">Jhansi First Corporation</h1>
+      <p class="slide-up">Building a Better Future Together</p>
+      <a href="#about" class="btn">Discover More</a>
     </div>
   </section>
 
   <!-- About Section -->
   <section id="about" class="about">
     <h2>About Us</h2>
-    <p>Jhansi First Corporation (JFC) is dedicated to promoting local businesses, culture, and opportunities. 
-       Our aim is to create sustainable development and uplift our community with innovation and collaboration.</p>
+    <p>Jhansi First Corporation (JFC) is dedicated to driving growth, innovation, and opportunities across multiple sectors including education, healthcare, automotive, and business consulting.</p>
   </section>
 
   <!-- Mission Section -->
   <section id="mission" class="mission">
     <h2>Our Mission</h2>
-    <p>To empower Jhansi by creating platforms that support entrepreneurship, education, healthcare, and social well-being.</p>
+    <p>To empower communities with sustainable growth, opportunities, and resources that foster self-reliance and development.</p>
   </section>
 
   <!-- Vision Section -->
   <section id="vision" class="vision">
     <h2>Our Vision</h2>
-    <p>To establish Jhansi as a hub of innovation, opportunities, and growth where every individual can prosper.</p>
+    <p>To become a global leader in driving socio-economic transformation, making Jhansi and beyond a hub of innovation and prosperity.</p>
   </section>
 
   <!-- Contact Section -->
   <section id="contact" class="contact">
     <h2>Contact Us</h2>
-    <p>Email: info@jfc.org | Phone: +91 7505592073</p>
+    <p>Email: info@jhansifirstcorp.com</p>
+    <p>Phone: +91-7505592073, +91-7307410214</p>
     <div class="social-icons">
-      <a href="#">🌐</a>
-      <a href="#">📘</a>
-      <a href="#">🐦</a>
-      <a href="#">📸</a>
+      <a href="#">Facebook</a> |
+      <a href="#">Instagram</a> |
+      <a href="#">LinkedIn</a>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 Jhansi First Corporation. All Rights Reserved.</p>
+    <p>&copy; 2025 Jhansi First Corporation. All Rights Reserved.</p>
   </footer>
 
+  <script>
+    // Toggle menu on mobile
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  </script>
 </body>
 </html>
