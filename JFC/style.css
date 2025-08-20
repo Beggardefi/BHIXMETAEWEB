@@ -12,31 +12,30 @@
 html,body{margin:0;padding:0;scroll-behavior:smooth}
 body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#222;background:#0b0d11}
 
-/* NAVBAR */
-.site-header{position:fixed;top:0;left:0;right:0;z-index:999}
-.navbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px;
-  background:rgba(13,71,161,.25);
-  backdrop-filter: blur(8px);
-  transition:background .3s, box-shadow .3s;
-}
-.navbar.scrolled{
-  background:var(--brand);
-  box-shadow:0 6px 20px rgba(0,0,0,.25);
-}
-.logo{font-weight:800;font-size:1.25rem;letter-spacing:.5px;color:#fff;text-decoration:none}
+<!-- NAVBAR -->
+<header class="site-header">
+  <nav class="navbar">
+    <a href="#" class="logo">
+      <img src="jfc-logo.png" alt="JFC Logo" class="logo-img"> 
+      JFC
+    </a>
 
-.nav-links{list-style:none;display:flex;gap:18px;margin:0}
-.nav-link{
-  color:#fff;text-decoration:none;font-weight:600;
-  padding:8px 10px;border-radius:8px;transition:color .2s, background .2s;
-}
-.nav-link:hover{color:var(--ink);background:var(--accent)}
-.nav-link.active{background:rgba(255,255,255,.12);}
+    <button class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-.hamburger{display:none;background:none;border:none;cursor:pointer}
-.hamburger span{display:block;width:24px;height:2px;background:#fff;margin:5px 0;transition:.3s}
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#home" class="nav-link active">Home</a></li>
+      <li><a href="#jobs" class="nav-link">Employment Jobs</a></li>
+      <li><a href="#services" class="nav-link">Services</a></li>
+      <li><a href="#agriculture" class="nav-link">Agriculture</a></li>
+      <li><a href="#partnerships" class="nav-link">Business Partnerships</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+</header>
 
 /* MOBILE NAV */
 @media (max-width: 900px){
