@@ -11,6 +11,17 @@ window.addEventListener('scroll', () => {
   if (window.scrollY > 10) navbar.classList.add('scrolled');
   else navbar.classList.remove('scrolled');
 });
+let lastScroll = 0;
+window.addEventListener("scroll", () => {
+  const current = window.pageYOffset;
+
+  if (current > lastScroll && current > 80) {
+    navbar.classList.add("hide"); // hides
+  } else {
+    navbar.classList.remove("hide"); // shows
+  }
+  lastScroll = current;
+});
 
 hamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
@@ -82,10 +93,20 @@ function prev(){ goTo(page-1); }
 nextBtn.addEventListener('click', next);
 prevBtn.addEventListener('click', prev);
 
-let auto = setInterval(next, 4000);
+
+
+let auto;
+function startAuto(){
+  auto = setInterval(next, 5000);
+}
+function stopAuto(){
+  clearInterval(auto);
+}
 const carousel = document.getElementById('cat-carousel');
 carousel.addEventListener('mouseenter', ()=> clearInterval(auto));
 carousel.addEventListener('mouseleave', ()=> auto = setInterval(next, 4000));
+startAuto();
+
 
 function onResize(){
   const newPer = getPerView();
@@ -93,11 +114,10 @@ function onResize(){
     perView = newPer;
     page = 0;
     buildDots();
-    updateTransform();
-  } else {
-    updateTransform();
   }
+  updateTransform();
 }
+
 window.addEventListener('resize', onResize);
 
 /* init */
