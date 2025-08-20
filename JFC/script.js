@@ -1,7 +1,11 @@
 /* NAV behavior: solid background on scroll, active link highlight, mobile toggle */
 const navbar = document.getElementById('navbar');
-const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('nav-links');
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("nav-links");
+
+hamburger.addEventListener("click", () => {
+  navLinks.classList.toggle("show");
+});
 
 window.addEventListener('scroll', () => {
   if (window.scrollY > 10) navbar.classList.add('scrolled');
