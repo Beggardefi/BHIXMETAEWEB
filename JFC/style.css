@@ -1,8 +1,9 @@
 :root {
-  --brand: #6a11cb;   /* Purple-Blue Gradient Start */
-  --brand-2: #2575fc; /* Gradient End */
-  --accent: #ff6f61;  /* Coral Red */
-  --ink: #1a1a1a;     /* Dark ink */
+  --brand: #06beb6;   /* Aqua */
+  --brand-2: #48b1bf; /* Teal Blue */
+  --accent: #f72585;  /* Neon Pink */
+  --ink: #1a1b2f;     /* Dark Purple Ink */
+  --background: #f7f9fc; /* Off White */
 }
 
 
